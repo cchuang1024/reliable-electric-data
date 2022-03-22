@@ -1,0 +1,6 @@
+logging:
+  config: classpath:logback-test.xml
+
+spring:
+  profiles:
+    active: test

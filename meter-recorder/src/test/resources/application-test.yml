@@ -1,0 +1,6 @@
+meter:
+  host: localhost
+  port: 8080
+
+db:
+  root: "D:/Codes/NCCUCodes/nccu-research/meter-recorder/DB"

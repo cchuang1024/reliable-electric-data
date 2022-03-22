@@ -1,0 +1,9 @@
+rootProject.name = 'reliable-electric-data'
+include 'models'
+include 'commons'
+include 'utils'
+include 'meter-recorder'
+include 'sim-meter'
+include 'data-collector'
+include 'dispatch-cloud'
+

@@ -1,0 +1,9 @@
+logging:
+  config: classpath:logback-spring.xml
+
+meter:
+  host: localhost
+  port: 8080
+
+db:
+  root: ./DB
