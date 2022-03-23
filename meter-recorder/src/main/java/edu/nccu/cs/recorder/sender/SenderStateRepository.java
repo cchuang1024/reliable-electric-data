@@ -23,7 +23,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
+import static edu.nccu.cs.recorder.sender.SenderStateEntity.STATE_ABANDON;
+import static edu.nccu.cs.recorder.sender.SenderStateEntity.STATE_FINISHED;
 import static edu.nccu.cs.recorder.sender.SenderStateEntity.STATE_INIT;
+import static edu.nccu.cs.recorder.sender.SenderStateEntity.STATE_PENDING;
 
 @Service
 @Slf4j
@@ -44,6 +47,11 @@ public class SenderStateRepository implements RocksRepository {
         return template.saveTemporalEntity(this::getDbPath, entity);
     }
 
+    public void remove(SenderStateEntity entity){
+        RocksTemplate template = context.getBean(RocksTemplate.class);
+        template.removeTemporalEntity(this::getDbPath, entity);
+    }
+
     public Optional<SenderStateEntity> findByTimestamp(long timestamp) {
         RocksTemplate template = context.getBean(RocksTemplate.class);
         return template.findTemporalEntity(this::getDbPath, timestamp, SenderStateEntity::getInstantFromRawBytes);
@@ -60,6 +68,22 @@ public class SenderStateRepository implements RocksRepository {
     }
 
     public List<SenderStateEntity> findByInit() {
+        return findByState(STATE_INIT);
+    }
+
+    public List<SenderStateEntity> findByPending() {
+        return findByState(STATE_PENDING);
+    }
+
+    public List<SenderStateEntity> findByFinished() {
+        return findByState(STATE_FINISHED);
+    }
+
+    public List<SenderStateEntity> findByAbandon() {
+        return findByState(STATE_ABANDON);
+    }
+
+    private List<SenderStateEntity> findByState(int state) {
         try (final Options options = new Options().setCreateIfMissing(true)) {
             try (final RocksDB db = RocksDB.open(options, getDbPath().toString());
                     final RocksIteratorWrapper wrapper = new RocksIteratorWrapper(db.newIterator())) {
@@ -73,7 +97,7 @@ public class SenderStateRepository implements RocksRepository {
                     Objects.requireNonNull(entity);
                     Objects.requireNonNull(entity.getData());
 
-                    if (Objects.equals(STATE_INIT, entity.getData().getState())) {
+                    if (Objects.equals(state, entity.getData().getState())) {
                         initEntities.add(entity);
                     }
                 }

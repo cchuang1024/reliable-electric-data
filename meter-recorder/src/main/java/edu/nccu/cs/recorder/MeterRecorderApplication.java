@@ -4,6 +4,7 @@ import org.rocksdb.RocksDB;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.reactive.config.EnableWebFlux;
@@ -12,6 +13,7 @@ import org.springframework.web.reactive.config.EnableWebFlux;
 @EnableScheduling
 @EnableAsync
 @EnableWebFlux
+@ConfigurationPropertiesScan("edu.nccu.cs.recorder.config")
 public class MeterRecorderApplication {
 
     static {

@@ -36,6 +36,17 @@ public class RocksTemplate {
         }
     }
 
+    public void removeTemporalEntity(Supplier<Path> dbPathSupplier, TemporalKeyValueEntity entity) {
+        try (final Options options = new Options().setCreateIfMissing(true)) {
+            try (final RocksDB db = RocksDB.open(options, dbPathSupplier.get().toString())) {
+                db.delete(entity.getKey());
+            } catch (RocksDBException e) {
+                log.error(ExceptionUtils.getStackTrace(e));
+                throw new ApplicationException(e);
+            }
+        }
+    }
+
     public <R> Optional<R> findTemporalEntity(Supplier<Path> dbPathSupplier, long timestamp, BiFunction<byte[], byte[], R> builder) {
         try (final Options options = new Options().setCreateIfMissing(true)) {
             try (final RocksDB db = RocksDB.open(options, dbPathSupplier.get().toString())) {

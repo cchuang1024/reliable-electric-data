@@ -4,3 +4,10 @@ meter:
 
 db:
   root: "D:/Codes/NCCUCodes/nccu-research/meter-recorder/DB"
+
+mqtt:
+  url: tcp://127.0.0.1:1883
+  clientId: meter-recorder
+  topic: meter-data
+  qos: 2
+  timeout: 5000

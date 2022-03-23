@@ -44,6 +44,7 @@ public class SenderStateEntity implements TemporalKeyValueEntity {
     public static final int STATE_ABANDON = 4;
 
     public static final int RETRY_INIT = 0;
+    public static final int RETRY_MAX = 300;
 
     private long timestamp;
     private SenderData data;
