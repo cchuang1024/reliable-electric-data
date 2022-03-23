@@ -4,7 +4,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import edu.nccu.cs.recorder.exception.ApplicationException;
+import edu.nccu.cs.exception.ApplicationException;
 import org.rocksdb.RocksDBException;
 import org.rocksdb.RocksIterator;
 import org.rocksdb.RocksIteratorInterface;

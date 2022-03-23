@@ -22,4 +22,8 @@ public class ByteUtils {
         buffer.flip();
         return buffer.getLong();
     }
+
+    public static boolean isNullOrEmpty(byte[] array) {
+        return array == null || array.length == 0;
+    }
 }

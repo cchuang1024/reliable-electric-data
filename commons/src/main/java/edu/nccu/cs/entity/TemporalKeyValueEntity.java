@@ -1,4 +1,4 @@
-package edu.nccu.cs.domain;
+package edu.nccu.cs.entity;
 
 public interface TemporalKeyValueEntity extends TemporalEntity, KeyValueEntity {
 }

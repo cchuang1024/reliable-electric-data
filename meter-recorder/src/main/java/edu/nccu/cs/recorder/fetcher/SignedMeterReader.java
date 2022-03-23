@@ -1,8 +1,8 @@
 package edu.nccu.cs.recorder.fetcher;
 
-import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 
+import edu.nccu.cs.domain.SignedMeterData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;

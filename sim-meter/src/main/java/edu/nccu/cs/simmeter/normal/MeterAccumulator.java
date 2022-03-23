@@ -7,10 +7,10 @@ import java.util.concurrent.atomic.AtomicLong;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import static edu.nccu.cs.simmeter.normal.MeterData.ENERGY_RATIO;
-import static edu.nccu.cs.simmeter.normal.MeterData.POWER_SCALE;
-import static edu.nccu.cs.simmeter.normal.MeterData.POWER_UNIT;
-import static edu.nccu.cs.simmeter.normal.MeterData.TIME_SCALE;
+import static edu.nccu.cs.domain.MeterData.ENERGY_RATIO;
+import static edu.nccu.cs.domain.MeterData.POWER_SCALE;
+import static edu.nccu.cs.domain.MeterData.POWER_UNIT;
+import static edu.nccu.cs.domain.MeterData.TIME_SCALE;
 
 @Component
 @Slf4j

@@ -1,14 +1,10 @@
 package edu.nccu.cs.recorder.sender;
 
-import java.util.List;
-
-import com.google.common.collect.ImmutableList;
-import edu.nccu.cs.recorder.domain.TemporalKeyValueEntity;
-import edu.nccu.cs.recorder.exception.SystemException;
-import edu.nccu.cs.recorder.util.ByteUtils;
-import edu.nccu.cs.recorder.util.DataConvertUtils;
-import edu.nccu.cs.recorder.util.ExceptionUtils;
-import edu.nccu.cs.recorder.util.TypedPair;
+import edu.nccu.cs.entity.TemporalKeyValueEntity;
+import edu.nccu.cs.exception.SystemException;
+import edu.nccu.cs.utils.ByteUtils;
+import edu.nccu.cs.utils.DataConvertUtils;
+import edu.nccu.cs.utils.ExceptionUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,7 +13,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
-import static edu.nccu.cs.recorder.util.DataConvertUtils.cborFromObject;
+import static edu.nccu.cs.utils.DataConvertUtils.cborFromObject;
 
 @Getter
 @Setter
@@ -60,12 +56,6 @@ public class SenderStateEntity implements TemporalKeyValueEntity {
     @Override
     public byte[] getValue() throws SystemException {
         return cborFromObject(this.data);
-    }
-
-    @Override
-    public List<TypedPair<byte[]>> getKeyValuePairs() throws SystemException {
-        // TODO: finish state entity key value pairs.
-        return ImmutableList.of();
     }
 
     @Getter

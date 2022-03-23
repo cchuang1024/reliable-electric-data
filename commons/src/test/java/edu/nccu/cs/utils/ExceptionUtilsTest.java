@@ -1,4 +1,4 @@
-package edu.nccu.cs.simmeter.util;
+package edu.nccu.cs.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;

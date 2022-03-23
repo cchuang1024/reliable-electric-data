@@ -2,7 +2,6 @@ package edu.nccu.cs.recorder.fetcher;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;

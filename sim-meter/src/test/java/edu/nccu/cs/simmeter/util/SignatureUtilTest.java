@@ -11,12 +11,11 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
 import lombok.extern.slf4j.Slf4j;
-import org.bouncycastle.jcajce.spec.RawEncodedKeySpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.Test;
 
-import static edu.nccu.cs.simmeter.util.ByteUtils.getBytesFromLong;
-import static edu.nccu.cs.simmeter.util.ByteUtils.mergeByteArrays;
+import static edu.nccu.cs.utils.ByteUtils.getBytesFromLong;
+import static edu.nccu.cs.utils.ByteUtils.mergeByteArrays;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j

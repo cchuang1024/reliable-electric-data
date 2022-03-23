@@ -12,14 +12,15 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
-import edu.nccu.cs.simmeter.exception.SystemException;
-import edu.nccu.cs.simmeter.util.ExceptionUtils;
+import edu.nccu.cs.exception.SystemException;
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import static edu.nccu.cs.utils.ExceptionUtils.getStackTrace;
 
 @Configuration
 @Slf4j
@@ -57,7 +58,7 @@ public class SecurityConfig {
             return g.generateKeyPair();
         } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
             log.error("failed too.");
-            log.error(ExceptionUtils.getStackTrace(e));
+            log.error(getStackTrace(e));
             throw new SystemException("Key pair importing and generating are all failed.");
         }
     }
@@ -73,7 +74,7 @@ public class SecurityConfig {
             return new KeyPair(pubKey, privKey);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException | NoSuchProviderException e) {
             log.error("failed.");
-            log.error(ExceptionUtils.getStackTrace(e));
+            log.error(getStackTrace(e));
             throw new SystemException(e);
         }
     }

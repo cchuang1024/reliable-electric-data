@@ -3,15 +3,18 @@ package edu.nccu.cs.simmeter.normal;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import edu.nccu.cs.simmeter.util.Randomizer;
+import edu.nccu.cs.domain.MeterData;
+import edu.nccu.cs.utils.Randomizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static edu.nccu.cs.domain.MeterData.POWER_SCALE;
 import static edu.nccu.cs.simmeter.normal.MeterAccumulator.INDEX_ENERGY;
 import static edu.nccu.cs.simmeter.normal.MeterAccumulator.INDEX_POWER;
-import static edu.nccu.cs.simmeter.normal.MeterData.POWER_SCALE;
 import static edu.nccu.cs.simmeter.normal.MeterDataConfig.BASE_VALUE_SIZE;
 import static edu.nccu.cs.simmeter.normal.MeterDataConfig.DIFF_VALUE;
+import static edu.nccu.cs.utils.Randomizer.randomDouble;
+import static java.lang.System.currentTimeMillis;
 
 @Service
 public class MeterDataService {
@@ -31,11 +34,11 @@ public class MeterDataService {
     }
 
     public long getCurrentPower() {
-        long timestamp = System.currentTimeMillis();
+        long timestamp = currentTimeMillis();
         long currentMinute = timestamp / (60 * 1000L);
         int index = (int) currentMinute % BASE_VALUE_SIZE;
         double baseValue = config.getBaseValues().get(index);
-        double ratio = Randomizer.randomDouble();
+        double ratio = randomDouble();
 
         BigDecimal diffValue = BigDecimal.valueOf(DIFF_VALUE)
                                          .multiply(BigDecimal.valueOf(ratio))

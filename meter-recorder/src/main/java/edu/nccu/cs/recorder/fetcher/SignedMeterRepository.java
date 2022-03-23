@@ -11,14 +11,14 @@ import java.util.stream.Collectors;
 
 import edu.nccu.cs.recorder.component.RocksTemplate;
 import edu.nccu.cs.recorder.domain.RocksRepository;
-import edu.nccu.cs.recorder.util.DateTimeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
-import static edu.nccu.cs.recorder.util.DateTimeUtils.isToday;
+import static edu.nccu.cs.utils.DateTimeUtils.isToday;
+import static edu.nccu.cs.utils.DateTimeUtils.localDateTimeFromTimestamp;
 
 @Service
 @Slf4j
@@ -43,7 +43,7 @@ public class SignedMeterRepository implements RocksRepository {
         if (isToday(timestamp)) {
             return getDbPath();
         } else {
-            LocalDateTime ldt = DateTimeUtils.localDateTimeFromTimestamp(timestamp);
+            LocalDateTime ldt = localDateTimeFromTimestamp(timestamp);
             String dateStr = ldt.format(DB_DATE);
             return Paths.get(dbRoot, DB_NAME + dateStr);
         }

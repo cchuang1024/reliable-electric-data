@@ -5,13 +5,12 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
-import edu.nccu.cs.recorder.domain.TemporalKeyValueEntity;
-import edu.nccu.cs.recorder.exception.ApplicationException;
-import edu.nccu.cs.recorder.exception.SystemException;
-import edu.nccu.cs.recorder.util.ByteUtils;
-import edu.nccu.cs.recorder.util.ExceptionUtils;
+import edu.nccu.cs.entity.TemporalKeyValueEntity;
+import edu.nccu.cs.exception.ApplicationException;
+import edu.nccu.cs.exception.SystemException;
+import edu.nccu.cs.utils.ByteUtils;
+import edu.nccu.cs.utils.ExceptionUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.bouncycastle.util.Arrays;
 import org.rocksdb.Options;
 import org.rocksdb.RocksDB;
 import org.rocksdb.RocksDBException;
@@ -43,7 +42,7 @@ public class RocksTemplate {
                 byte[] key = ByteUtils.getBytesFromLong(timestamp);
                 byte[] value = db.get(key);
 
-                if (Arrays.isNullOrEmpty(value)) {
+                if (ByteUtils.isNullOrEmpty(value)) {
                     return Optional.empty();
                 }
 

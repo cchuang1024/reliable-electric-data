@@ -1,4 +1,4 @@
-package edu.nccu.cs.simmeter.util;
+package edu.nccu.cs.utils;
 
 import java.io.IOException;
 

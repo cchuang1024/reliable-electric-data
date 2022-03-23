@@ -2,11 +2,11 @@ package edu.nccu.cs.recorder.data;
 
 import java.time.Instant;
 
-import edu.nccu.cs.recorder.fetcher.SignedMeterData;
+import edu.nccu.cs.domain.SignedMeterData;
+import edu.nccu.cs.exception.SystemException;
 import edu.nccu.cs.recorder.fetcher.SignedMeterEntity;
-import edu.nccu.cs.recorder.exception.SystemException;
-import edu.nccu.cs.recorder.util.ByteUtils;
-import edu.nccu.cs.recorder.util.DataConvertUtils;
+import edu.nccu.cs.utils.ByteUtils;
+import edu.nccu.cs.utils.DataConvertUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
@@ -22,13 +22,9 @@ public class DataFormatTransTest {
         String targetJson = DataConvertUtils.jsonFromObject(signed);
 
         byte[] targetCbor = DataConvertUtils.cborFromObject(signed);
-        byte[] targetSmile = DataConvertUtils.smileFromObject(signed);
-        byte[] targetBson = DataConvertUtils.bsonFromObject(signed);
 
         log.info("length of json: {}", targetJson.length());
         log.info("length of cbor: {}", targetCbor.length);
-        log.info("length of smile: {}", targetSmile.length);
-        log.info("length of bson: {}", targetBson.length);
 
         SignedMeterEntity entity1 = SignedMeterEntity.getInstanceByInstantAndData(Instant.now(), signed);
         log.info("length of key: {}", entity1.getKey().length);
