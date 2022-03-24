@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import static edu.nccu.cs.recorder.sender.SenderStateEntity.STATE_FINISHED;
 import static edu.nccu.cs.recorder.sender.SenderStateEntity.STATE_PENDING;
+import static edu.nccu.cs.recorder.sender.SenderStateEntity.STATE_WAIT;
 import static edu.nccu.cs.utils.ExceptionUtils.getStackTrace;
 import static java.lang.System.currentTimeMillis;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;

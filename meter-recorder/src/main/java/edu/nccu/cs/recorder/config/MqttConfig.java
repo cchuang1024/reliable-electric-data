@@ -1,5 +1,7 @@
 package edu.nccu.cs.recorder.config;
 
+import java.util.concurrent.LinkedBlockingQueue;
+
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.springframework.context.annotation.Bean;
@@ -8,9 +10,12 @@ import org.springframework.integration.annotation.IntegrationComponentScan;
 import org.springframework.integration.annotation.MessagingGateway;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.channel.DirectChannel;
+import org.springframework.integration.core.MessageProducer;
 import org.springframework.integration.mqtt.core.DefaultMqttPahoClientFactory;
 import org.springframework.integration.mqtt.core.MqttPahoClientFactory;
+import org.springframework.integration.mqtt.inbound.MqttPahoMessageDrivenChannelAdapter;
 import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
+import org.springframework.integration.mqtt.support.DefaultPahoMessageConverter;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 
@@ -44,8 +49,29 @@ public class MqttConfig {
     }
 
     @MessagingGateway(defaultRequestChannel = "mqttOutboundChannel")
-    public interface NoticeGateway {
+    public interface MeterDataGateway {
         void sendToMqtt(String data);
     }
 
+    @Bean
+    public MessageChannel mqttInputChannel() {
+        return new DirectChannel();
+    }
+
+    @Bean
+    public MessageProducer inbound(MqttConfiguration config) {
+        MqttPahoMessageDrivenChannelAdapter adapter =
+                new MqttPahoMessageDrivenChannelAdapter(config.getUrl(), config.getClientId(), config.getResponse());
+        adapter.setCompletionTimeout(config.getTimeout());
+        adapter.setConverter(new DefaultPahoMessageConverter());
+        adapter.setQos(config.getQos());
+        adapter.setOutputChannel(mqttInputChannel());
+        return adapter;
+    }
+
+    @Bean
+    @ServiceActivator(inputChannel = "mqttInputChannel")
+    public MessageHandler handler() {
+        return message -> System.out.println(message.getPayload());
+    }
 }

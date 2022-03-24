@@ -13,6 +13,7 @@ public class MqttConfiguration {
     private String url;
     private String clientId;
     private String topic;
+    private String response;
     private Integer qos;
     private Integer timeout;
 }

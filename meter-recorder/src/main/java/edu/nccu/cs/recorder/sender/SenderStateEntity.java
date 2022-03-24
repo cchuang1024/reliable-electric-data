@@ -39,6 +39,7 @@ public class SenderStateEntity implements TemporalKeyValueEntity {
     }
 
     public static final int STATE_INIT = 1;
+    public static final int STATE_WAIT = 2;
     public static final int STATE_PENDING = 2;
     public static final int STATE_FINISHED = 3;
     public static final int STATE_ABANDON = 4;
