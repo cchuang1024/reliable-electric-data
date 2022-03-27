@@ -7,15 +7,11 @@ import edu.nccu.cs.recorder.fetcher.SignedMeterEntity;
 import edu.nccu.cs.recorder.fetcher.SignedMeterRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import static edu.nccu.cs.recorder.sender.SenderStateEntity.STATE_FINISHED;
 import static edu.nccu.cs.recorder.sender.SenderStateEntity.STATE_PENDING;
-import static edu.nccu.cs.recorder.sender.SenderStateEntity.STATE_WAIT;
 import static edu.nccu.cs.utils.ExceptionUtils.getStackTrace;
 import static java.lang.System.currentTimeMillis;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
