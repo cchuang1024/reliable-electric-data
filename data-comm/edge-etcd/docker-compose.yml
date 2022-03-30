@@ -1,0 +1,21 @@
+version: "3"
+services:
+  edge-etcd-1:
+    image: bitnami/etcd:latest
+    restart: always
+    ports:
+      - 4379:2379
+      - 4380:2380
+    volumes:
+      - /usr/share/zoneinfo/Asia/Taipei:/etc/localtime:ro
+      - ./etcd-e.yml:/opt/bitnami/etcd/conf/etcd.conf.yml
+    environment:
+      TZ: Asia/Taipei
+      ALLOW_NONE_AUTHENTICATION: yes
+    extra_hosts:
+      - "my-host:192.168.1.52"
+
+networks:
+  default:
+    external:
+      name: edge-network
