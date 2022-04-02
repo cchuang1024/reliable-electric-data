@@ -16,8 +16,8 @@ services:
       ETCD_INITIAL_CLUSTER: "cloud-etcd-1=http://cloud-etcd-1:2380,cloud-etcd-2=http://cloud-etcd-2:2380"
       ETCD_INITIAL_CLUSTER_TOKEN: "etcd-cluster-1"
       ETCD_INITIAL_ADVERTISE_PEER_URLS: "http://cloud-etcd-1:2380"
-      ETCD_LISTEN_PEER_URLS: "http://cloud-etcd-1:2380"
-      ETCD_LISTEN_CLIENT_URLS: "http://cloud-etcd-1:2379"
+      ETCD_LISTEN_PEER_URLS: "http://0.0.0.0:2380"
+      ETCD_LISTEN_CLIENT_URLS: "http://0.0.0.0:2379"
       ETCD_ADVERTISE_CLIENT_URLS: "http://cloud-etcd-1:2379"
   cloud-etcd-2:
     image: bitnami/etcd:latest
@@ -35,8 +35,8 @@ services:
       ETCD_INITIAL_CLUSTER: "cloud-etcd-1=http://cloud-etcd-1:2380,cloud-etcd-2=http://cloud-etcd-2:2380"
       ETCD_INITIAL_CLUSTER_TOKEN: "etcd-cluster-1"
       ETCD_INITIAL_ADVERTISE_PEER_URLS: "http://cloud-etcd-2:2380"
-      ETCD_LISTEN_PEER_URLS: "http://cloud-etcd-2:2380"
-      ETCD_LISTEN_CLIENT_URLS: "http://cloud-etcd-2:2379"
+      ETCD_LISTEN_PEER_URLS: "http://0.0.0.0:2380"
+      ETCD_LISTEN_CLIENT_URLS: "http://0.0.0.0:2379"
       ETCD_ADVERTISE_CLIENT_URLS: "http://cloud-etcd-2:2379"
 
 networks:

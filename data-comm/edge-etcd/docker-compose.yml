@@ -8,10 +8,17 @@ services:
       - 4380:2380
     volumes:
       - /usr/share/zoneinfo/Asia/Taipei:/etc/localtime:ro
-      - ./etcd-e.yml:/opt/bitnami/etcd/conf/etcd.conf.yml
     environment:
       TZ: Asia/Taipei
-      ALLOW_NONE_AUTHENTICATION: yes
+      ALLOW_NONE_AUTHENTICATION: "yes"
+      ETCD_NAME: "edge-etcd-1"
+      ETCD_INITIAL_CLUSTER_STATE: "new"
+      ETCD_INITIAL_CLUSTER: "edge-etcd-1=http://edge-etcd-1:2380,cloud-etcd-1=http://my-host:2380,cloud-etcd-2=http://my-host:3380"
+      ETCD_INITIAL_CLUSTER_TOKEN: "etcd-cluster-1"
+      ETCD_INITIAL_ADVERTISE_PEER_URLS: "http://edge-etcd-1:2380"
+      ETCD_LISTEN_PEER_URLS: "http://0.0.0.0:2380"
+      ETCD_LISTEN_CLIENT_URLS: "http://0.0.0.0:2379"
+      ETCD_ADVERTISE_CLIENT_URLS: "http://edge-etcd-1:2379"
     extra_hosts:
       - "my-host:192.168.1.52"
 
