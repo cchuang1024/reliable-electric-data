@@ -3,13 +3,16 @@ services:
   edge-mqtt:
     image: eclipse-mosquitto
     restart: always
+    ports:
+      - 1883:1883
+      - 9001:9001
     volumes:
       - ./mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
       - /usr/share/zoneinfo/Asia/Taipei:/etc/localtime:ro
     environment:
       TZ: Asia/Taipei
-    #extra_hosts:
-    #  - "cloud-mqtt:192.168.1.52"
+    extra_hosts:
+      - "cloud-mqtt:192.168.1.52"
 networks:
   default:
     external:
