@@ -1,7 +1,7 @@
 plugins {
-	id 'org.springframework.boot' version '2.6.4'
-	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-	id 'java'
+    id 'org.springframework.boot' version '2.6.4'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
 }
 
 group = 'edu.nccu.cs'
@@ -9,13 +9,15 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+    maven{ url 'https://oss.sonatype.org/content/repositories/snapshots/' }
 }
 
 dependencies {
@@ -24,7 +26,12 @@ dependencies {
     implementation platform('io.projectreactor:reactor-bom:2020.0.17')
     implementation 'io.projectreactor:reactor-core'
 
-	implementation 'org.springframework.boot:spring-boot-starter'
+    implementation platform('org.dizitart:nitrite-bom:4.0.0-SNAPSHOT')
+    implementation 'org.dizitart:nitrite-mvstore-adapter'
+    implementation 'org.dizitart:nitrite-rocksdb-adapter'
+    // implementation 'org.dizitart:nitrite:3.4.4'
+
+    implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-integration'
@@ -32,19 +39,19 @@ dependencies {
     implementation 'org.springframework.integration:spring-integration-mqtt'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-	testCompileOnly 'org.projectlombok:lombok'
-	testAnnotationProcessor 'org.projectlombok:lombok'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
 
     testImplementation 'org.springframework.integration:spring-integration-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
-	implementation 'org.rocksdb:rocksdbjni:6.28.2'
+    // implementation 'org.rocksdb:rocksdbjni:6.28.2'
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
-}
+            useJUnitPlatform()
+        }

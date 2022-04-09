@@ -1,14 +1,9 @@
 package edu.nccu.cs.recorder.fetcher;
 
 import java.time.Instant;
-import java.util.Base64;
 
 import edu.nccu.cs.domain.SignedMeterData;
-import edu.nccu.cs.entity.TemporalKeyValueEntity;
-import edu.nccu.cs.exception.SystemException;
-import edu.nccu.cs.utils.ByteUtils;
-import edu.nccu.cs.utils.DataConvertUtils;
-import edu.nccu.cs.utils.ExceptionUtils;
+import edu.nccu.cs.entity.TemporalEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,9 +11,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-
-import static edu.nccu.cs.utils.ByteUtils.getBytesFromLong;
-import static edu.nccu.cs.utils.DataConvertUtils.cborFromObject;
+import org.dizitart.no2.collection.Document;
+import org.dizitart.no2.index.IndexType;
+import org.dizitart.no2.mapper.Mappable;
+import org.dizitart.no2.mapper.NitriteMapper;
+import org.dizitart.no2.repository.annotations.Entity;
+import org.dizitart.no2.repository.annotations.Id;
+import org.dizitart.no2.repository.annotations.Index;
 
 @Getter
 @Setter
@@ -27,62 +26,47 @@ import static edu.nccu.cs.utils.DataConvertUtils.cborFromObject;
 @Builder
 @ToString
 @Slf4j
-public class SignedMeterEntity implements TemporalKeyValueEntity {
-
-    private long timestamp;
-    private SignedMeterValue data;
+@Entity(value = "SignedMeter",
+        indices = {
+                @Index(value = "timestamp",
+                        type = IndexType.NonUnique),
+        })
+public class SignedMeterEntity implements TemporalEntity, Mappable {
 
     public static synchronized SignedMeterEntity getInstanceByInstantAndData(Instant instant, SignedMeterData data) {
         return SignedMeterEntity.builder()
                                 .timestamp(instant.toEpochMilli())
-                                .data(SignedMeterValue.builder()
-                                                      .energy(data.getMeterData().getEnergy())
-                                                      .power(data.getMeterData().getPower())
-                                                      .signature(Base64.getDecoder().decode(data.getSignature()))
-                                                      .build())
+                                .energy(data.getMeterData().getEnergy())
+                                .power(data.getMeterData().getPower())
+                                .signature(data.getSignature())
                                 .build();
     }
 
-    public static synchronized SignedMeterEntity getInstanceByTimestampAndData(long timestamp, SignedMeterValue data) {
-        return SignedMeterEntity.builder()
-                                .timestamp(timestamp)
-                                .data(data)
-                                .build();
+    @Id
+    private long timestamp;
+
+    private long power;
+    private long energy;
+    private String signature;
+
+    @Override
+    public Document write(NitriteMapper mapper) {
+        Document document = Document.createDocument();
+        document.put("timestamp", getTimestamp());
+        document.put("power", getPower());
+        document.put("energy", getEnergy());
+        document.put("signature", getSignature());
+
+        return document;
     }
 
-    public static synchronized SignedMeterEntity getInstantFromRawBytes(byte[] key, byte[] value) {
-        long timestamp = ByteUtils.getLongFromBytes(key);
-        try {
-            SignedMeterValue data = DataConvertUtils.objectFromCbor(SignedMeterValue.class, value);
-            return SignedMeterEntity.builder()
-                                    .timestamp(timestamp)
-                                    .data(data)
-                                    .build();
-        } catch (SystemException ex) {
-            log.error(ExceptionUtils.getStackTrace(ex));
-            return null;
+    @Override
+    public void read(NitriteMapper mapper, Document document) {
+        if (document != null) {
+            setTimestamp(document.get("timestamp", Long.class));
+            setPower(document.get("power", Long.class));
+            setEnergy(document.get("energy", Long.class));
+            setSignature(document.get("signature", String.class));
         }
-    }
-
-    @Override
-    public byte[] getKey() {
-        return getBytesFromLong(this.timestamp);
-    }
-
-    @Override
-    public byte[] getValue() throws SystemException {
-        return cborFromObject(this.data);
-    }
-
-    @Getter
-    @Setter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Builder
-    @ToString
-    public static class SignedMeterValue {
-        private long power;
-        private long energy;
-        private byte[] signature;
     }
 }

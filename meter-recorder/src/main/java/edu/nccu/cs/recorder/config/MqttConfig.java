@@ -61,7 +61,8 @@ public class MqttConfig {
     @Bean
     public MessageProducer inbound(MqttConfiguration config) {
         MqttPahoMessageDrivenChannelAdapter adapter =
-                new MqttPahoMessageDrivenChannelAdapter(config.getUrl(), config.getClientId(), config.getResponse());
+                new MqttPahoMessageDrivenChannelAdapter(
+                        config.getUrl(), config.getClientId(), config.getResponse());
         adapter.setCompletionTimeout(config.getTimeout());
         adapter.setConverter(new DefaultPahoMessageConverter());
         adapter.setQos(config.getQos());

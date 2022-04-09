@@ -1,111 +1,60 @@
 package edu.nccu.cs.recorder.sender;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
-import edu.nccu.cs.exception.ApplicationException;
-import edu.nccu.cs.recorder.component.RocksTemplate;
-import edu.nccu.cs.recorder.domain.RocksIteratorWrapper;
-import edu.nccu.cs.recorder.domain.RocksRepository;
-import edu.nccu.cs.utils.ExceptionUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.rocksdb.Options;
-import org.rocksdb.RocksDB;
-import org.rocksdb.RocksDBException;
+import org.dizitart.no2.Nitrite;
+import org.dizitart.no2.repository.Cursor;
+import org.dizitart.no2.repository.ObjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Repository;
 
-import static edu.nccu.cs.recorder.sender.SenderStateEntity.STATE_ABANDON;
-import static edu.nccu.cs.recorder.sender.SenderStateEntity.STATE_FINISHED;
-import static edu.nccu.cs.recorder.sender.SenderStateEntity.STATE_INIT;
-import static edu.nccu.cs.recorder.sender.SenderStateEntity.STATE_PENDING;
+import static org.dizitart.no2.filters.FluentFilter.where;
 
-@Service
+@Repository
 @Slf4j
-public class SenderStateRepository implements RocksRepository {
+public class SenderStateRepository {
 
-    @Value("${db.root}")
-    private String dbRoot;
     @Autowired
-    private ApplicationContext context;
+    @Qualifier("senderMetaDB")
+    private Nitrite senderMetaDB;
 
-    @Override
-    public Path getDbPath() {
-        return Paths.get(dbRoot, "SenderMeta");
+    private ObjectRepository<SenderStateEntity> getRepository() {
+        return senderMetaDB.getRepository(SenderStateEntity.class);
     }
 
-    public long save(SenderStateEntity entity) {
-        RocksTemplate template = context.getBean(RocksTemplate.class);
-        return template.saveTemporalEntity(this::getDbPath, entity);
-    }
-
-    public void remove(SenderStateEntity entity){
-        RocksTemplate template = context.getBean(RocksTemplate.class);
-        template.removeTemporalEntity(this::getDbPath, entity);
-    }
-
-    public Optional<SenderStateEntity> findByTimestamp(long timestamp) {
-        RocksTemplate template = context.getBean(RocksTemplate.class);
-        return template.findTemporalEntity(this::getDbPath, timestamp, SenderStateEntity::getInstantFromRawBytes);
-    }
-
-    public List<SenderStateEntity> findByTimestamps(List<Long> timestamps) {
-        RocksTemplate template = context.getBean(RocksTemplate.class);
-        return timestamps.stream()
-                         .map(timestamp ->
-                                 template.findTemporalEntity(this::getDbPath, timestamp, SenderStateEntity::getInstantFromRawBytes))
-                         .filter(Optional::isPresent)
-                         .map(Optional::get)
-                         .collect(Collectors.toList());
+    public void save(SenderStateEntity entity) {
+        ObjectRepository<SenderStateEntity> repository = getRepository();
+        repository.insert(entity);
     }
 
     public List<SenderStateEntity> findByInit() {
-        return findByState(STATE_INIT);
+        ObjectRepository<SenderStateEntity> repository = getRepository();
+        Cursor<SenderStateEntity> cursor = repository.find(where("state").eq(SenderStateEntity.STATE_INIT));
+        return cursor.toList();
     }
 
     public List<SenderStateEntity> findByPending() {
-        return findByState(STATE_PENDING);
+        ObjectRepository<SenderStateEntity> repository = getRepository();
+        Cursor<SenderStateEntity> cursor = repository.find(where("state").eq(SenderStateEntity.STATE_PENDING));
+        return cursor.toList();
     }
 
     public List<SenderStateEntity> findByFinished() {
-        return findByState(STATE_FINISHED);
+        ObjectRepository<SenderStateEntity> repository = getRepository();
+        Cursor<SenderStateEntity> cursor = repository.find(where("state").eq(SenderStateEntity.STATE_FINISHED));
+        return cursor.toList();
     }
 
     public List<SenderStateEntity> findByAbandon() {
-        return findByState(STATE_ABANDON);
+        ObjectRepository<SenderStateEntity> repository = getRepository();
+        Cursor<SenderStateEntity> cursor = repository.find(where("state").eq(SenderStateEntity.STATE_ABANDON));
+        return cursor.toList();
     }
 
-    private List<SenderStateEntity> findByState(int state) {
-        try (final Options options = new Options().setCreateIfMissing(true)) {
-            try (final RocksDB db = RocksDB.open(options, getDbPath().toString());
-                    final RocksIteratorWrapper wrapper = new RocksIteratorWrapper(db.newIterator())) {
-                List<SenderStateEntity> initEntities = new LinkedList<>();
-                for (wrapper.seekToFirst(); wrapper.isValid(); wrapper.next()) {
-                    byte[] key = wrapper.key();
-                    byte[] value = wrapper.value();
-
-                    SenderStateEntity entity = SenderStateEntity.getInstantFromRawBytes(key, value);
-
-                    Objects.requireNonNull(entity);
-                    Objects.requireNonNull(entity.getData());
-
-                    if (Objects.equals(state, entity.getData().getState())) {
-                        initEntities.add(entity);
-                    }
-                }
-                return initEntities;
-            } catch (RocksDBException | IOException e) {
-                log.error(ExceptionUtils.getStackTrace(e));
-                throw new ApplicationException(e);
-            }
-        }
+    public void remove(SenderStateEntity entity) {
+        ObjectRepository<SenderStateEntity> repository = getRepository();
+        repository.remove(entity);
     }
 }

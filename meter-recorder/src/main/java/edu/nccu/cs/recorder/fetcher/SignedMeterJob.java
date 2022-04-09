@@ -40,21 +40,20 @@ public class SignedMeterJob implements Runnable {
             SignedMeterData meterData = compFuture.get(); log.info("signed meter data: {}", meterData);
 
             Instant now = Instant.now().truncatedTo(ChronoUnit.MINUTES);
-            SignedMeterEntity entity = SignedMeterEntity.getInstanceByInstantAndData(now, meterData);
-            log.info("signed meter entity: {}", entity);
+            SignedMeterEntity meter = SignedMeterEntity.getInstanceByInstantAndData(now, meterData);
+            log.info("signed meter entity: {}", meter);
 
             SignedMeterRepository meterRepository = context.getBean(SignedMeterRepository.class);
-            long timestamp = meterRepository.save(entity); log.info("saved timestamp: {}", timestamp);
+            meterRepository.save(meter);
+            log.info("saved timestamp: {}", meter.getTimestamp());
 
             SenderStateRepository stateRepository = context.getBean(SenderStateRepository.class);
             SenderStateEntity state =
                     SenderStateEntity.builder()
-                                     .timestamp(timestamp)
-                                     .data(SenderStateEntity.SenderData.builder()
-                                                                       .state(STATE_INIT)
-                                                                       .actionTime(System.currentTimeMillis())
-                                                                       .retry(RETRY_INIT)
-                                                                       .build())
+                                     .timestamp(meter.getTimestamp())
+                                     .state(STATE_INIT)
+                                     .actionTime(System.currentTimeMillis())
+                                     .retry(RETRY_INIT)
                                      .build();
             stateRepository.save(state);
         } catch (InterruptedException | ExecutionException ex) {

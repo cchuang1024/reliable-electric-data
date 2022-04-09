@@ -27,25 +27,25 @@ public class MainRunner {
     @Qualifier("taskExecutor")
     private ThreadPoolTaskExecutor taskExecutor;
 
-    @Scheduled(cron = "5 * * * * * *")
+    @Scheduled(cron = "5 * * * * *")
     public void fetchSignedMeterData() throws ExecutionException, InterruptedException {
         log.warn("fetch signed meter data.");
         runJob(SignedMeterJob.class);
     }
 
-    @Scheduled(cron = "20 * * * * * *")
+    @Scheduled(cron = "20 * * * * *")
     public void sendSignedMeterData() throws ExecutionException, InterruptedException {
         log.warn("send signed meter data to collector");
         runJob(SenderJob.class);
     }
 
-    @Scheduled(cron = "35 * * * * * *")
+    @Scheduled(cron = "35 * * * * *")
     public void resendSignedMeterData() throws ExecutionException, InterruptedException {
         log.warn("resend signed meter data to collector");
         runJob(ReSendJob.class);
     }
 
-    @Scheduled(cron = "50 * * * * * *")
+    @Scheduled(cron = "50 * * * * *")
     public void cleanState() throws ExecutionException, InterruptedException {
         log.warn("clean abandon and finished state");
         runJob(CleanJob.class);

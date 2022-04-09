@@ -3,11 +3,12 @@ meter:
   port: 8080
 
 db:
-  root: "D:/Codes/NCCUCodes/nccu-research/meter-recorder/DB"
+  root: "D:/Codes/NCCUCodes/nccu-research/reliable-electric-data/DB"
 
 mqtt:
   url: tcp://127.0.0.1:1883
   clientId: meter-recorder
   topic: meter-data
+  response: meter-resp
   qos: 2
   timeout: 5000

@@ -16,10 +16,6 @@ import org.springframework.web.reactive.config.EnableWebFlux;
 @ConfigurationPropertiesScan("edu.nccu.cs.recorder.config")
 public class MeterRecorderApplication {
 
-    static {
-        RocksDB.loadLibrary();
-    }
-
     public static void main(String[] args) {
         SpringApplication application = new SpringApplication(MeterRecorderApplication.class);
         application.setWebApplicationType(WebApplicationType.NONE);

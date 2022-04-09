@@ -37,16 +37,16 @@ public class SenderJob implements Runnable {
             meterEntity.ifPresent(meter -> {
                 try {
                     sender.send(meter);
-                    state.getData().setState(STATE_FINISHED);
+                    state.setState(STATE_FINISHED);
                 } catch (Exception ex) {
                     log.error(getStackTrace(ex));
 
-                    int retry = state.getData().getRetry() + 1;
-                    state.getData().setRetry(retry);
-                    state.getData().setState(STATE_PENDING);
+                    int retry = state.getRetry() + 1;
+                    state.setRetry(retry);
+                    state.setState(STATE_PENDING);
                 }
             });
-            state.getData().setActionTime(currentTimeMillis());
+            state.setActionTime(currentTimeMillis());
 
             stateRepository.save(state);
         });

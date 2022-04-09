@@ -1,9 +1,6 @@
 package edu.nccu.cs.recorder.sender;
 
-import java.util.Base64;
-
-import edu.nccu.cs.domain.MeterData;
-import edu.nccu.cs.domain.SignedMeterData;
+import edu.nccu.cs.domain.SignedMeterDataRequest;
 import edu.nccu.cs.recorder.config.MqttConfig;
 import edu.nccu.cs.recorder.fetcher.SignedMeterEntity;
 import edu.nccu.cs.utils.DataConvertUtils;
@@ -19,16 +16,13 @@ public class MqttSender {
     private MqttConfig.MeterDataGateway meterDataGateway;
 
     public void send(SignedMeterEntity meter) throws Exception {
-        var data = meter.getData();
-
         meterDataGateway.sendToMqtt(DataConvertUtils.jsonFromObject(
-                SignedMeterData.builder()
-                               .meterData(MeterData.builder()
-                                                   .power(data.getPower())
-                                                   .energy(data.getEnergy())
-                                                   .build())
-                               .signature(Base64.getEncoder().encodeToString(data.getSignature()))
-                               .build()));
+                SignedMeterDataRequest.builder()
+                                      .timestamp(meter.getTimestamp())
+                                      .power(meter.getPower())
+                                      .energy(meter.getEnergy())
+                                      .signature(meter.getSignature())
+                                      .build()));
 
     }
 }

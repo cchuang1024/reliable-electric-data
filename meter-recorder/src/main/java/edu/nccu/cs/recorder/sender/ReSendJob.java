@@ -39,22 +39,22 @@ public class ReSendJob implements Runnable {
             meterEntity.ifPresent(meter -> {
                 try {
                     sender.send(meter);
-                    state.getData().setState(STATE_FINISHED);
+                    state.setState(STATE_FINISHED);
                 } catch (Exception ex) {
                     log.error(getStackTrace(ex));
 
-                    int retry = state.getData().getRetry() + 1;
-                    state.getData().setRetry(retry);
+                    int retry = state.getRetry() + 1;
+                    state.setRetry(retry);
 
                     if (retry == RETRY_MAX) {
-                        state.getData().setState(STATE_ABANDON);
+                        state.setState(STATE_ABANDON);
                     } else {
-                        state.getData().setState(STATE_PENDING);
+                        state.setState(STATE_PENDING);
                     }
                 }
             });
 
-            state.getData().setActionTime(currentTimeMillis());
+            state.setActionTime(currentTimeMillis());
 
             stateRepository.save(state);
         });
