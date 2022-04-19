@@ -5,6 +5,10 @@ meter:
   host: localhost
   port: 8080
 
+collector:
+  host: localhost
+  port: 8088
+
 db:
   root: ./DB
 
