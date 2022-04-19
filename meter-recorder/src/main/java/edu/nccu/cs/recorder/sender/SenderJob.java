@@ -26,7 +26,7 @@ public class SenderJob implements Runnable {
     @Autowired
     private SenderStateRepository stateRepository;
     @Autowired
-    private MqttSender sender;
+    private HttpSender sender;
 
     @Override
     public void run() {
