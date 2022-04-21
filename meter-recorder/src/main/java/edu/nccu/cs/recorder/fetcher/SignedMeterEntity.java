@@ -49,6 +49,8 @@ public class SignedMeterEntity implements TemporalEntity, Mappable {
     private long energy;
     private String signature;
 
+    private long preTimestamp;
+
     @Override
     public Document write(NitriteMapper mapper) {
         Document document = Document.createDocument();
