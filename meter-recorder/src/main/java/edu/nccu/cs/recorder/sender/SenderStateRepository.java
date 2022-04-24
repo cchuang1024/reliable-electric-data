@@ -1,7 +1,5 @@
 package edu.nccu.cs.recorder.sender;
 
-import java.util.List;
-
 import lombok.extern.slf4j.Slf4j;
 import org.dizitart.no2.Nitrite;
 import org.dizitart.no2.repository.Cursor;
@@ -10,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
+import static edu.nccu.cs.recorder.sender.SenderStateEntity.*;
 import static org.dizitart.no2.filters.FluentFilter.where;
 
 @Repository
@@ -31,30 +32,35 @@ public class SenderStateRepository {
 
     public List<SenderStateEntity> findByInit() {
         ObjectRepository<SenderStateEntity> repository = getRepository();
-        Cursor<SenderStateEntity> cursor = repository.find(where("state").eq(SenderStateEntity.STATE_INIT));
+        Cursor<SenderStateEntity> cursor = repository.find(where("state").eq(STATE_INIT));
         return cursor.toList();
     }
 
     public List<SenderStateEntity> findByPending() {
         ObjectRepository<SenderStateEntity> repository = getRepository();
-        Cursor<SenderStateEntity> cursor = repository.find(where("state").eq(SenderStateEntity.STATE_PENDING));
+        Cursor<SenderStateEntity> cursor = repository.find(where("state").eq(STATE_PENDING));
         return cursor.toList();
     }
 
     public List<SenderStateEntity> findByFinished() {
         ObjectRepository<SenderStateEntity> repository = getRepository();
-        Cursor<SenderStateEntity> cursor = repository.find(where("state").eq(SenderStateEntity.STATE_FINISHED));
+        Cursor<SenderStateEntity> cursor = repository.find(where("state").eq(STATE_FINISHED));
         return cursor.toList();
     }
 
     public List<SenderStateEntity> findByAbandon() {
         ObjectRepository<SenderStateEntity> repository = getRepository();
-        Cursor<SenderStateEntity> cursor = repository.find(where("state").eq(SenderStateEntity.STATE_ABANDON));
+        Cursor<SenderStateEntity> cursor = repository.find(where("state").eq(STATE_ABANDON));
         return cursor.toList();
     }
 
     public void remove(SenderStateEntity entity) {
         ObjectRepository<SenderStateEntity> repository = getRepository();
         repository.remove(entity);
+    }
+
+    public void update(SenderStateEntity entity) {
+        ObjectRepository<SenderStateEntity> repository = getRepository();
+        repository.update(entity);
     }
 }

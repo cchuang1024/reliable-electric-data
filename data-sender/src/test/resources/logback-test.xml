@@ -12,12 +12,12 @@
     </appender>
 
     <!-- LOG everything at INFO level -->
-    <root level="warn">
+    <root level="info">
         <appender-ref ref="Console"/>
     </root>
 
     <!-- LOG "com.baeldung*" at TRACE level -->
-    <logger name="edu.nccu" level="info" additivity="false">
+    <logger name="edu.nccu" level="debug" additivity="false">
         <appender-ref ref="Console"/>
     </logger>
 

@@ -1,8 +1,5 @@
 package edu.nccu.cs.recorder.sender;
 
-import java.util.List;
-import java.util.Optional;
-
 import edu.nccu.cs.recorder.fetcher.SignedMeterEntity;
 import edu.nccu.cs.recorder.fetcher.SignedMeterRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -10,10 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import static edu.nccu.cs.recorder.sender.SenderStateEntity.RETRY_MAX;
-import static edu.nccu.cs.recorder.sender.SenderStateEntity.STATE_ABANDON;
-import static edu.nccu.cs.recorder.sender.SenderStateEntity.STATE_FINISHED;
-import static edu.nccu.cs.recorder.sender.SenderStateEntity.STATE_PENDING;
+import java.util.List;
+import java.util.Optional;
+
+import static edu.nccu.cs.recorder.sender.SenderStateEntity.*;
 import static edu.nccu.cs.utils.ExceptionUtils.getStackTrace;
 import static java.lang.System.currentTimeMillis;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
@@ -55,8 +52,7 @@ public class ReSendJob implements Runnable {
             });
 
             state.setActionTime(currentTimeMillis());
-
-            stateRepository.save(state);
+            stateRepository.update(state);
         });
     }
 

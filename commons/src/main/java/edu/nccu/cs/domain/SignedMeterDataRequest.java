@@ -18,4 +18,5 @@ public class SignedMeterDataRequest {
     private long power;
     private long energy;
     private String signature;
+    private long preTimestamp;
 }

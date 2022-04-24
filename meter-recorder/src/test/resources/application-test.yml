@@ -1,14 +1,16 @@
+recorder:
+  id: MAIN-01
+
 meter:
   host: localhost
   port: 8080
 
-db:
-  root: "D:/Codes/NCCUCodes/nccu-research/reliable-electric-data/DB"
+collector:
+  host: localhost
+  port: 5984
+  user: nccu
+  pass: nccu
 
-mqtt:
-  url: tcp://127.0.0.1:1883
-  clientId: meter-recorder
-  topic: meter-data
-  response: meter-resp
-  qos: 2
-  timeout: 5000
+db:
+  root: /home/schemer/Codes/reliable-electric-data/DBs/meter-recorder
+

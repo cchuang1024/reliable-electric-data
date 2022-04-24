@@ -55,5 +55,6 @@ public class MainRunner {
         T job = context.getBean(jobClaz);
         CompletableFuture<Void> compFuture = CompletableFuture.runAsync(job, taskExecutor);
         compFuture.get();
+        // taskExecutor.execute(job);
     }
 }

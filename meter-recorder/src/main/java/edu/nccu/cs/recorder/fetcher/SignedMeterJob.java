@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import edu.nccu.cs.domain.SignedMeterData;
 import edu.nccu.cs.recorder.sender.SenderStateEntity;
@@ -37,7 +38,9 @@ public class SignedMeterJob implements Runnable {
         try {
             SignedMeterReader reader = context.getBean(SignedMeterReader.class);
             CompletableFuture<SignedMeterData> compFuture = CompletableFuture.supplyAsync(reader, taskExecutor);
-            SignedMeterData meterData = compFuture.get(); log.info("signed meter data: {}", meterData);
+            // Future<SignedMeterData> future = taskExecutor.submit(reader::get);
+            SignedMeterData meterData = compFuture.get();
+            log.info("signed meter data: {}", meterData);
 
             Instant now = Instant.now().truncatedTo(ChronoUnit.MINUTES);
             SignedMeterEntity meter = SignedMeterEntity.getInstanceByInstantAndData(now, meterData);

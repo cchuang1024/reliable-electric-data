@@ -1,14 +1,14 @@
 package edu.nccu.cs.recorder.sender;
 
-import java.util.List;
-import java.util.Optional;
-
 import edu.nccu.cs.recorder.fetcher.SignedMeterEntity;
 import edu.nccu.cs.recorder.fetcher.SignedMeterRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Optional;
 
 import static edu.nccu.cs.recorder.sender.SenderStateEntity.STATE_FINISHED;
 import static edu.nccu.cs.recorder.sender.SenderStateEntity.STATE_PENDING;
@@ -32,8 +32,11 @@ public class SenderJob implements Runnable {
     public void run() {
         List<SenderStateEntity> initEntities = stateRepository.findByInit();
 
+        log.info("found init: {}", initEntities);
+
         initEntities.forEach(state -> {
             Optional<SignedMeterEntity> meterEntity = meterRepository.findByTimestamp(state.getTimestamp());
+            log.info("meter entity: {}", meterEntity);
             meterEntity.ifPresent(meter -> {
                 try {
                     sender.send(meter);
@@ -47,8 +50,7 @@ public class SenderJob implements Runnable {
                 }
             });
             state.setActionTime(currentTimeMillis());
-
-            stateRepository.save(state);
+            stateRepository.update(state);
         });
     }
 }

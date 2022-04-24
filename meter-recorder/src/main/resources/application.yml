@@ -10,15 +10,9 @@ meter:
 
 collector:
   host: localhost
-  port: 8088
+  port: 5984
+  user: nccu
+  pass: nccu
 
 db:
   root: ./DBs/meter-recorder
-
-mqtt:
-  url: tcp://127.0.0.1:1883
-  clientId: meter-recorder
-  topic: meter-data
-  response: meter-resp
-  qos: 2
-  timeout: 5000
