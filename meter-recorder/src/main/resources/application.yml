@@ -8,6 +8,11 @@ meter:
   host: localhost
   port: 8080
 
+collectors:
+  - id: collector-1
+    host: localhost
+    port: 5984
+
 collector:
   host: localhost
   port: 5984

@@ -15,6 +15,11 @@ public class MainRunner {
     @Autowired
     private ApplicationContext context;
 
+    @Scheduled(fixedRate = 15 * 1000L)
+    public void checkState(){
+
+    }
+
     @Scheduled(cron = "30 * * * * *")
     public void fetchAndSend(){
 
