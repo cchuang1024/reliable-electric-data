@@ -1,13 +1,16 @@
 couchdb:
   client:
-    url: http://localhost:5984/
+    url: http://127.0.0.1:5984/
     username: nccu
     password: nccu
 
 db:
-  root: /home/schemer/Codes/reliable-electric-data/DBs/meter-recorder
+  root: /home/schemer/Codes/reliable-electric-data/DBs/data-sender
 
 zookeeper:
   connectString: "127.0.0.1:2181"
   maxRetries: 3
   baseSleepTimeMs: 1000
+
+application:
+  id: data-sender-test

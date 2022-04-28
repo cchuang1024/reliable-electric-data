@@ -1,7 +1,7 @@
 package edu.nccu.cs.datasender.config;
 
-import edu.nccu.cs.datasender.sender.ApplicationState;
-import edu.nccu.cs.datasender.sender.SenderState;
+import edu.nccu.cs.datasender.manager.ApplicationState;
+import edu.nccu.cs.datasender.manager.SenderState;
 import edu.nccu.cs.utils.TokenGenerator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

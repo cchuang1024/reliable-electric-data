@@ -1,4 +1,4 @@
-package edu.nccu.cs.datasender.sender;
+package edu.nccu.cs.datasender.manager;
 
 public enum SenderState {
     INIT,
