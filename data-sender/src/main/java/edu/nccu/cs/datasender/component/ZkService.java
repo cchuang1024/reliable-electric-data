@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
 
 import static edu.nccu.cs.datasender.config.Constant.PATH_ID;
 import static edu.nccu.cs.datasender.config.Constant.PATH_TOKEN;
@@ -118,7 +117,9 @@ public class ZkService {
     public static final long CONNECTION_WAIT_TIME = 10L;
 
     public boolean isConnected() {
-        return zkClient.waitUntilConnected(CONNECTION_WAIT_TIME, TimeUnit.SECONDS);
+        // return zkClient.waitUntilConnected(CONNECTION_WAIT_TIME, TimeUnit.SECONDS);
+        return zkClient.getZooKeeper().getState().isConnected()
+                && zkClient.getZooKeeper().getState().isAlive();
     }
 
     public void close() {

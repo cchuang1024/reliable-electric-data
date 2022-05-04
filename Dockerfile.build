@@ -1,0 +1,6 @@
+FROM gradle:jdk11
+
+COPY . /app
+
+RUN cd /app && \
+    gradle build -x test

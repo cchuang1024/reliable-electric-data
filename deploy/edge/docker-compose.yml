@@ -1,5 +1,13 @@
 version: "3"
 services:
+  sim-meter:
+    image: nccu/sim-meter
+    restart: always
+    ports:
+      - 38080:8080
+    environment:
+      TZ: Asia/Taipei
+
   data-saver-1:
     image: couchdb
     restart: always

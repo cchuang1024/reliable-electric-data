@@ -42,3 +42,8 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+bootJar {
+    mainClass = 'edu.nccu.cs.simmeter.SimMeterApplication'
+    archiveFileName = 'sim-meter.jar'
+}

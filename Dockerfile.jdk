@@ -1,0 +1,6 @@
+FROM openjdk:11-jre-bullseye
+# FROM adoptopenjdk:11-jre-hotspot-focal
+
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y cron
