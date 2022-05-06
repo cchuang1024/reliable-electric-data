@@ -1,0 +1,10 @@
+version: "3"
+services:
+  sim-meter:
+    image: dispatch-cloud:54320/nccu/sim-meter
+    restart: always
+    ports:
+      - 8080:8080
+    environment:
+      TZ: Asia/Taipei
+
