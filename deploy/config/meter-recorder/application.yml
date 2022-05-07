@@ -2,7 +2,7 @@ logging:
   config: classpath:logback-spring.xml
 
 db:
-  root: ./DBs/meter-recorder
+  root: /db
 
 configuration:
   recorder:

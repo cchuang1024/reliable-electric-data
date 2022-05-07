@@ -15,5 +15,6 @@ services:
     restart: always
     volumes:
       - /usr/share/zoneinfo/Asia/Taipei:/etc/localtime:ro
+      - /db:/home/schemer/db
     environment:
       TZ: Asia/Taipei

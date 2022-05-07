@@ -53,3 +53,8 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+bootJar {
+    mainClass = 'edu.nccu.cs.datasender.DataSenderApplication'
+    archiveFileName = 'data-sender.jar'
+}

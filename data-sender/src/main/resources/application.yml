@@ -8,7 +8,7 @@ db:
   root: ./DBs/data-sender
 
 zookeeper:
-  connectString: "127.0.0.1:2181"
+  connectString: "dispatch-cloud:2181"
   maxRetries: 3
   baseSleepTimeMs: 1000
 
