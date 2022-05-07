@@ -45,3 +45,8 @@ dependencies {
 tasks.named('test') {
             useJUnitPlatform()
         }
+
+bootJar {
+    mainClass = 'edu.nccu.cs.recorder.MeterRecorderApplication'
+    archiveFileName = 'meter-recorder.jar'
+}

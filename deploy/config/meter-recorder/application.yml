@@ -9,17 +9,17 @@ configuration:
     id: MAIN-01
 
   meter:
-    host: localhost
-    port: 38080
+    host: sim-meter
+    port: 8080
 
   collectors:
-    - id: collector-1
-      host: localhost
+    - id: data-saver-1
+      host: data-saver-1
       port: 5984
       user: nccu
       pass: nccu
-    - id: collector-2
-      host: localhost
-      port: 5985
+    - id: data-saver-2
+      host: data-saver-2
+      port: 5984
       user: nccu
       pass: nccu

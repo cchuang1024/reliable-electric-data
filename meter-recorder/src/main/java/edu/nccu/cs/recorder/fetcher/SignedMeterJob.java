@@ -1,11 +1,5 @@
 package edu.nccu.cs.recorder.fetcher;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-
 import edu.nccu.cs.domain.SignedMeterData;
 import edu.nccu.cs.recorder.sender.SenderStateEntity;
 import edu.nccu.cs.recorder.sender.SenderStateRepository;
@@ -17,6 +11,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import static edu.nccu.cs.recorder.sender.SenderStateEntity.RETRY_INIT;
 import static edu.nccu.cs.recorder.sender.SenderStateEntity.STATE_INIT;
@@ -38,7 +37,6 @@ public class SignedMeterJob implements Runnable {
         try {
             SignedMeterReader reader = context.getBean(SignedMeterReader.class);
             CompletableFuture<SignedMeterData> compFuture = CompletableFuture.supplyAsync(reader, taskExecutor);
-            // Future<SignedMeterData> future = taskExecutor.submit(reader::get);
             SignedMeterData meterData = compFuture.get();
             log.info("signed meter data: {}", meterData);
 
@@ -48,7 +46,7 @@ public class SignedMeterJob implements Runnable {
 
             SignedMeterRepository meterRepository = context.getBean(SignedMeterRepository.class);
             meterRepository.save(meter);
-            log.info("saved timestamp: {}", meter.getTimestamp());
+            log.info("saved timestamp of meter data: {}", meter.getTimestamp());
 
             SenderStateRepository stateRepository = context.getBean(SenderStateRepository.class);
             SenderStateEntity state =
@@ -59,6 +57,7 @@ public class SignedMeterJob implements Runnable {
                                      .retry(RETRY_INIT)
                                      .build();
             stateRepository.save(state);
+            log.info("saved state: {}", state);
         } catch (InterruptedException | ExecutionException ex) {
             log.error(ExceptionUtils.getStackTrace(ex));
         }

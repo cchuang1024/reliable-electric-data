@@ -31,13 +31,15 @@ public class SenderJob implements Runnable {
     @Override
     public void run() {
         List<SenderStateEntity> initEntities = stateRepository.findByInit();
-
         log.info("found init: {}", initEntities);
 
         initEntities.forEach(state -> {
             Optional<SignedMeterEntity> meterEntity = meterRepository.findByTimestamp(state.getTimestamp());
-            log.info("meter entity: {}", meterEntity);
+            log.info("init meter entity: {}", meterEntity);
+
             meterEntity.ifPresent(meter -> {
+                state.setActionTime(currentTimeMillis());
+
                 try {
                     sender.send(meter);
                     state.setState(STATE_FINISHED);
@@ -49,7 +51,7 @@ public class SenderJob implements Runnable {
                     state.setState(STATE_PENDING);
                 }
             });
-            state.setActionTime(currentTimeMillis());
+
             stateRepository.update(state);
         });
     }

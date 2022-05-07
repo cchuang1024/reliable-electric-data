@@ -14,3 +14,22 @@ collector:
 db:
   root: /home/schemer/Codes/reliable-electric-data/DBs/meter-recorder
 
+configuration:
+  recorder:
+    id: MAIN-01
+
+  meter:
+    host: localhost
+    port: 8080
+
+  collectors:
+    - id: collector-1
+      host: localhost
+      port: 5984
+      user: nccu
+      pass: nccu
+    - id: collector-2
+      host: localhost
+      port: 5985
+      user: nccu
+      pass: nccu

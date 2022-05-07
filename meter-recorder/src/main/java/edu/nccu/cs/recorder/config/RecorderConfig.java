@@ -1,10 +1,6 @@
 package edu.nccu.cs.recorder.config;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import org.dizitart.no2.Nitrite;
-import org.dizitart.no2.mvstore.MVStoreModule;
 import org.dizitart.no2.rocksdb.RocksDBModule;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,14 +8,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 @Configuration
 public class RecorderConfig {
 
     @Value("${db.root}")
     private String dbRoot;
 
-    public static final String SIGNED_METER_NAME = "SignedMeterEntities";
-    public static final String SENDER_META_NAME = "SenderMeta";
+    private static final String SIGNED_METER_NAME = "SignedMeterEntities";
+    private static final String SENDER_META_NAME = "SenderMeta";
 
     @Bean("signedMeterStoreModule")
     public RocksDBModule signedMeterStoreModule() {

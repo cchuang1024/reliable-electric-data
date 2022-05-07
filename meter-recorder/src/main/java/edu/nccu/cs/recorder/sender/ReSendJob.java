@@ -30,10 +30,15 @@ public class ReSendJob implements Runnable {
     @Override
     public void run() {
         List<SenderStateEntity> pendingEntities = stateRepository.findByPending();
+        log.info("found pending: {}", pendingEntities);
 
         pendingEntities.forEach(state -> {
             Optional<SignedMeterEntity> meterEntity = meterRepository.findByTimestamp(state.getTimestamp());
+            log.info("pending meter entity: {}", meterEntity);
+
             meterEntity.ifPresent(meter -> {
+                state.setActionTime(currentTimeMillis());
+
                 try {
                     sender.send(meter);
                     state.setState(STATE_FINISHED);
@@ -51,7 +56,6 @@ public class ReSendJob implements Runnable {
                 }
             });
 
-            state.setActionTime(currentTimeMillis());
             stateRepository.update(state);
         });
     }
