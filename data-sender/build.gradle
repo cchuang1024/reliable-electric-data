@@ -39,7 +39,8 @@ dependencies {
     implementation 'org.dizitart:nitrite-mvstore-adapter'
     implementation 'org.dizitart:nitrite-rocksdb-adapter'
 
-    implementation 'com.groocraft:couch-slacker:2.4.0'
+    implementation 'com.groocraft:couch-slacker:2.3.2'
+    // implementation 'com.groocraft:couch-slacker:2.4.0'
 
     implementation 'org.apache.curator:curator-client:5.2.1'
     implementation 'org.apache.curator:curator-framework:5.2.1'

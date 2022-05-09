@@ -10,16 +10,16 @@ configuration:
 
   meter:
     host: localhost
-    port: 38080
+    port: 28080
 
   collectors:
     - id: collector-1
       host: localhost
-      port: 5984
+      port: 25984
       user: nccu
       pass: nccu
     - id: collector-2
       host: localhost
-      port: 5985
+      port: 25985
       user: nccu
       pass: nccu

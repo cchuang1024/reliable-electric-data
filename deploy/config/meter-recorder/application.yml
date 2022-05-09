@@ -2,7 +2,7 @@ logging:
   config: classpath:logback-spring.xml
 
 db:
-  root: /db
+  root: /app/DB
 
 configuration:
   recorder:

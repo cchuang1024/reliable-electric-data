@@ -3,9 +3,8 @@ couchdb:
     url: http://127.0.0.1:5984/
     username: nccu
     password: nccu
-
-db:
-  root: ./DBs/data-sender
+    query-strategy: view
+    schema-operation: none
 
 zookeeper:
   connectString: "dispatch-cloud:2181"

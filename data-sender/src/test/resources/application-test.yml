@@ -1,14 +1,14 @@
 couchdb:
   client:
-    url: http://127.0.0.1:5984/
+    url: http://127.0.0.1:25984/
     username: nccu
     password: nccu
-
-db:
-  root: /home/schemer/Codes/reliable-electric-data/DBs/data-sender
+    query-strategy: view
+    schema-operation: create
+    initialization-strategy: single
 
 zookeeper:
-  connectString: "dispatch-cloud:2181"
+  connectString: "localhost:32181"
   maxRetries: 3
   baseSleepTimeMs: 1000
 

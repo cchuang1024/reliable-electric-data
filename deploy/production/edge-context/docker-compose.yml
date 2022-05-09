@@ -23,3 +23,14 @@ services:
       TZ: Asia/Taipei
       COUCHDB_USER: nccu
       COUCHDB_PASSWORD: nccu
+
+  sim-meter:
+    image: dispatch-cloud:54320/nccu/sim-meter
+    restart: always
+    volumes:
+      - /usr/share/zoneinfo/Asia/Taipei:/etc/localtime:ro
+    ports:
+      - 8080:8080
+    environment:
+      TZ: Asia/Taipei
+

@@ -11,9 +11,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @Configuration
 public class SenderConfig {
 
-    @Value("${db.root}")
-    private String dbRoot;
-
     @Bean("taskExecutor")
     public ThreadPoolTaskExecutor taskExecutor() {
         ThreadPoolTaskExecutor pool = new ThreadPoolTaskExecutor();

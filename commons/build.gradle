@@ -23,8 +23,8 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
 
     implementation 'com.google.guava:guava:31.1-jre'
-    implementation 'org.functionaljava:functionaljava:5.0'
-    implementation 'io.vavr:vavr:1.0.0-alpha-4'
+    // implementation 'org.functionaljava:functionaljava:5.0'
+    // implementation 'io.vavr:vavr:1.0.0-alpha-4'
 
     implementation 'com.fasterxml.jackson.core:jackson-core:2.13.2'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.2'

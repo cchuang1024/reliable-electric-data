@@ -1,0 +1,49 @@
+version: "3"
+services:
+  sim-meter:
+    image: dispatch-cloud:54320/nccu/sim-meter
+    restart: always
+    volumes:
+      - /usr/share/zoneinfo/Asia/Taipei:/etc/localtime:ro
+    ports:
+      - 28080:8080
+    environment:
+      TZ: Asia/Taipei
+
+  data-saver-1:
+    image: couchdb
+    restart: always
+    volumes:
+      - /home/schemer/data/data-saver-1:/opt/couchdb/data
+    ports:
+      - 25984:5984
+    environment:
+      TZ: Asia/Taipei
+      COUCHDB_USER: nccu
+      COUCHDB_PASSWORD: nccu
+
+  data-saver-2:
+    image: couchdb
+    restart: always
+    volumes:
+      - /home/schemer/data/data-saver-2:/opt/couchdb/data
+    ports:
+      - 25985:5984
+    environment:
+      TZ: Asia/Taipei
+      COUCHDB_USER: nccu
+      COUCHDB_PASSWORD: nccu
+
+#  meter-recorder:
+#    image: dispatch-cloud:54320/nccu/meter-recorder
+#    restart: always
+#    volumes:
+#      - /usr/share/zoneinfo/Asia/Taipei:/etc/localtime:ro
+#      - /app/DB:/home/schemer/data/DBs/meter-recorders
+#    environment:
+#      TZ: Asia/Taipei
+
+networks:
+  default:
+    external:
+      name: edge-network

@@ -14,6 +14,7 @@ import java.util.Objects;
 public class SignedMeterDataRequest {
 
     public static final String DB_NAME = "meter";
+    public static final String STATE_INIT = "init";
     @JsonProperty("_id")
     private String id;
 
@@ -23,7 +24,7 @@ public class SignedMeterDataRequest {
     private Long energy;
     private String signature;
     private Long preTimestamp;
-    private Boolean init;
+    private String state;
     private Integer retry;
 
     public SignedMeterDataRequest init() {
@@ -31,7 +32,7 @@ public class SignedMeterDataRequest {
         Objects.requireNonNull(timestamp, "timestamp must not be null.");
 
         this.id = String.format("%s::%d", recorderId, timestamp);
-        this.init = true;
+        this.state = STATE_INIT;
         this.retry = 0;
 
         return this;
