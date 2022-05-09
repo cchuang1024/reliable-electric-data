@@ -12,6 +12,11 @@ import lombok.ToString;
 @Setter
 @ToString
 public class SignedMeterDataEntity extends DocumentBase {
+
+    public static final String STATE_INIT = "init";
+    public static final String STATE_PENDING = "pending";
+    public static final String STATE_DONE = "done";
+
     @JsonProperty("recorderId")
     private String recorderId;
 
@@ -30,8 +35,8 @@ public class SignedMeterDataEntity extends DocumentBase {
     @JsonProperty("preTimestamp")
     private Long preTimestamp;
 
-    @JsonProperty("init")
-    private Boolean init;
+    @JsonProperty("state")
+    private String state;
 
     @JsonProperty("retry")
     private Integer retry;
