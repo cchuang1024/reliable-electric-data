@@ -24,7 +24,7 @@ public class ZkClients {
     public synchronized IZkClient getOne(String className) {
         if (!this.registry.containsKey(className)) {
             // ZkConnection zkConn = new ZkConnection(connectString);
-            this.registry.put(className, new ZkClient(connectString));
+            this.registry.put(className, new ZkClient(connectString, 30000));
         }
 
         return this.registry.get(className);

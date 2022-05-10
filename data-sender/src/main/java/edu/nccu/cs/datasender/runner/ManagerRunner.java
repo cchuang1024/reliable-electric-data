@@ -10,9 +10,9 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Component;
 
-@Component
+// @Component
 @Slf4j
-@Profile("!test")
+// @Profile("!test")
 public class ManagerRunner implements CommandLineRunner {
 
     @Autowired

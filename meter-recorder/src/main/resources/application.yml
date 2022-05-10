@@ -9,17 +9,17 @@ configuration:
     id: MAIN-01
 
   meter:
-    host: localhost
+    host: 192.168.1.52
     port: 28080
 
   collectors:
     - id: collector-1
-      host: localhost
+      host: 192.168.1.52
       port: 25984
       user: nccu
       pass: nccu
     - id: collector-2
-      host: localhost
+      host: 192.168.1.52
       port: 25985
       user: nccu
       pass: nccu

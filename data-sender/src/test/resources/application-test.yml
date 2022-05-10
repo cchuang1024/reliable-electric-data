@@ -1,6 +1,7 @@
 couchdb:
   client:
-    url: http://127.0.0.1:25984/
+    # url: http://127.0.0.1:25985/
+    url: http://192.168.1.52:25985/
     username: nccu
     password: nccu
     query-strategy: view
@@ -8,7 +9,7 @@ couchdb:
     initialization-strategy: single
 
 zookeeper:
-  connectString: "localhost:32181"
+  connectString: "192.168.1.52:32181"
   maxRetries: 3
   baseSleepTimeMs: 1000
 
