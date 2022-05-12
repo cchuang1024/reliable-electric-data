@@ -3,6 +3,8 @@ package edu.nccu.cs.datasender.fetcher;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import edu.nccu.cs.datasender.signedmeterdata.SignedMeterDataEntity;
+import edu.nccu.cs.datasender.signedmeterdata.SignedMeterDataRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

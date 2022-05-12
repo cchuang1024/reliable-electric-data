@@ -1,6 +1,6 @@
 package edu.nccu.cs.datasender.manager;
 
-import edu.nccu.cs.datasender.component.ZkService;
+import edu.nccu.cs.datasender.common.ZkService;
 import edu.nccu.cs.exception.ApplicationException;
 import edu.nccu.cs.utils.TokenGenerator;
 import lombok.extern.slf4j.Slf4j;

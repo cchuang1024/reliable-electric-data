@@ -1,6 +1,6 @@
 package edu.nccu.cs.datasender.manager;
 
-import edu.nccu.cs.datasender.component.ZkService;
+import edu.nccu.cs.datasender.common.ZkService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

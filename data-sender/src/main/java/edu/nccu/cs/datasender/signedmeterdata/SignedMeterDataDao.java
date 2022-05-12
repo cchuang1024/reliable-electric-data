@@ -1,4 +1,4 @@
-package edu.nccu.cs.datasender.fetcher;
+package edu.nccu.cs.datasender.signedmeterdata;
 
 import com.groocraft.couchdb.slacker.CouchDbClient;
 import com.groocraft.couchdb.slacker.configuration.CouchDbProperties;

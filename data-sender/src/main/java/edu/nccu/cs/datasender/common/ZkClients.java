@@ -1,4 +1,4 @@
-package edu.nccu.cs.datasender.component;
+package edu.nccu.cs.datasender.common;
 
 import com.github.zkclient.IZkClient;
 import com.github.zkclient.ZkClient;

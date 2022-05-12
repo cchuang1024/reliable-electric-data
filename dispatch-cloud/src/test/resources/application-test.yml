@@ -1,0 +1,14 @@
+couchdb:
+  client:
+    # url: http://127.0.0.1:25985/
+    url: http://192.168.1.52:35984/
+    username: nccu
+    password: nccu
+    query-strategy: view
+    schema-operation: create
+    initialization-strategy: single
+
+zookeeper:
+  connectString: "192.168.1.52:32181"
+  maxRetries: 3
+  baseSleepTimeMs: 1000
