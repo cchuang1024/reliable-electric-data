@@ -1,6 +1,5 @@
-package edu.nccu.cs.datasender.config;
+package edu.nccu.cs.dispatchcloud.config;
 
-import edu.nccu.cs.datasender.common.ZkClients;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
@@ -22,18 +21,10 @@ public class ZkConfig {
     @Value("${zookeeper.baseSleepTimeMs}")
     private int sleepTime;
 
-    @Value("${zookeeper.connectionTimeout}")
-    private int connectionTimeout;
-
-    @Bean("curatorClient")
+    @Bean
     @Scope(SCOPE_PROTOTYPE)
-    public CuratorFramework curatorClient() {
+    public CuratorFramework zkClient() {
         ExponentialBackoffRetry retryPolicy = new ExponentialBackoffRetry(sleepTime, maxRetries);
         return CuratorFrameworkFactory.newClient(connectString, retryPolicy);
-    }
-
-    @Bean("zkClients")
-    public ZkClients zkClients() {
-        return new ZkClients(connectString, connectionTimeout);
     }
 }

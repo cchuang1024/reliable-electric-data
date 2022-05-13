@@ -4,12 +4,14 @@ couchdb:
     username: nccu
     password: nccu
     query-strategy: view
-    schema-operation: none
+    schema-operation: create
+    initialization-strategy: single
 
 zookeeper:
   connectString: "dispatch-cloud:2181"
   maxRetries: 3
   baseSleepTimeMs: 1000
+  connectionTimeout: 30000
 
 application:
   id: data-sender-1

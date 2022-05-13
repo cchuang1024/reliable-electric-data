@@ -4,14 +4,15 @@ import com.github.zkclient.IZkClient;
 import edu.nccu.cs.exception.ApplicationException;
 import edu.nccu.cs.exception.SystemException;
 import edu.nccu.cs.utils.ExceptionUtils;
+import edu.nccu.cs.utils.TypedPair;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.Semaphore;
 
-import static edu.nccu.cs.datasender.config.Constant.PATH_ID;
-import static edu.nccu.cs.datasender.config.Constant.PATH_TOKEN;
+import static edu.nccu.cs.datasender.config.Constant.*;
 
 @Service
 @Slf4j
@@ -21,7 +22,7 @@ public class ZkService {
     private Semaphore mutex;
 
     @Autowired
-    public ZkService(ZkClients zkClients) {
+    public ZkService(@Qualifier("zkClients") ZkClients zkClients) {
         this.zkClient = zkClients.getOne(ZkService.class.getName());
         this.mutex = new Semaphore(1);
     }
@@ -40,6 +41,21 @@ public class ZkService {
             log.info(ExceptionUtils.getStackTrace(nodeExist));
 
             throw new ApplicationException("node exists.");
+        }
+    }
+
+    public TypedPair<String> getIdAndToken(){
+        byte[] token = zkClient.readData(PATH_TOKEN, true);
+        byte[] id = zkClient.readData(PATH_ID, true);
+
+        return TypedPair.cons(buildString(id), buildString(token));
+    }
+
+    private String buildString(byte[] raw){
+        if(raw == null){
+            return EMPTY_STRING;
+        }else{
+            return new String(raw);
         }
     }
 
