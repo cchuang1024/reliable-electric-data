@@ -14,7 +14,6 @@ import org.springframework.web.reactive.config.EnableWebFlux;
 @EnableAsync
 @EnableWebFlux
 @EnableCouchDbRepositories
-@ConfigurationPropertiesScan("edu.nccu.cs.datasender.config")
 public class DataSenderApplication {
     public static void main(String[] args) {
         SpringApplication application = new SpringApplication(DataSenderApplication.class);

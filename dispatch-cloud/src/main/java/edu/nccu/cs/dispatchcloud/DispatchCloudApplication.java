@@ -13,7 +13,6 @@ import org.springframework.web.reactive.config.EnableWebFlux;
 @EnableAsync
 @EnableWebFlux
 @EnableCouchDbRepositories
-@ConfigurationPropertiesScan("edu.nccu.cs.dispatchcloud.config")
 public class DispatchCloudApplication {
 
     public static void main(String[] args) {

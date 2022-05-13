@@ -11,6 +11,7 @@ zookeeper:
   connectString: "192.168.1.52:32181"
   maxRetries: 3
   baseSleepTimeMs: 1000
+  connectionTimeout: 30000
 
 application:
   id: data-sender-test
