@@ -6,20 +6,20 @@ db:
 
 configuration:
   recorder:
-    id: MAIN-01
+    id: ${RECORDER_ID}
 
   meter:
-    host: sim-meter
+    host: ${METER_HOST}
     port: 8080
 
   collectors:
     - id: data-saver-1
-      host: data-saver-1
+      host: ${COLLECTOR_1_HOST}
       port: 5984
       user: nccu
       pass: nccu
     - id: data-saver-2
-      host: data-saver-2
+      host: ${COLLECTOR_2_HOST}
       port: 5984
       user: nccu
       pass: nccu

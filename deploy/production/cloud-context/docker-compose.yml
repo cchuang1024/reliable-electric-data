@@ -42,3 +42,5 @@ services:
       COUCHDB_USER: nccu
       COUCHDB_PASSWORD: nccu
 
+volumes:
+  cloud-data: {}

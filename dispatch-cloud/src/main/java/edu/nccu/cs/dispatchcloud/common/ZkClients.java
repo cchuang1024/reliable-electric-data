@@ -15,6 +15,9 @@ public class ZkClients {
     @Value("${zookeeper.connectString}")
     private String connectString;
 
+    @Value("${zookeeper.connectionTimeout}")
+    private Integer connectionTimeout;
+
     private Map<String, IZkClient> registry;
 
     public ZkClients() {
@@ -23,11 +26,13 @@ public class ZkClients {
 
     public synchronized IZkClient getOne(String className) {
         if (!this.registry.containsKey(className)) {
-            // ZkConnection zkConn = new ZkConnection(connectString);
-            this.registry.put(className, new ZkClient(connectString, 30000));
+            this.registry.put(className, new ZkClient(connectString, connectionTimeout));
         }
 
         return this.registry.get(className);
     }
 
+    public synchronized IZkClient create() {
+        return new ZkClient(connectString, connectionTimeout);
+    }
 }

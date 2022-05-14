@@ -29,6 +29,7 @@ public class MeterDataResponse {
 
     public enum MessageType {
         SUCCESS,
+        NOT_AUTHORIZED,
         FIX;
     }
 }

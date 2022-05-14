@@ -1,21 +1,19 @@
 package edu.nccu.cs.protocol;
 
-import java.util.List;
+import lombok.*;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EqualsAndHashCode
 public class MeterDataRequest<T> {
 
-    private Long fieldId;
+    private String applicationId;
+    private String token;
     private Long edgeTime;
     private List<T> payload;
 }

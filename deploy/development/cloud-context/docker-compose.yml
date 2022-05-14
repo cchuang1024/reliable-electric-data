@@ -34,13 +34,16 @@ services:
     image: couchdb
     restart: always
     volumes:
-      - /home/schemer/data:/opt/couchdb/data
+      - cloud-data:/opt/couchdb/data
     ports:
       - 35984:5984
     environment:
       TZ: Asia/Taipei
       COUCHDB_USER: nccu
       COUCHDB_PASSWORD: nccu
+
+volumes:
+  cloud-data: { }
 
 networks:
   default:

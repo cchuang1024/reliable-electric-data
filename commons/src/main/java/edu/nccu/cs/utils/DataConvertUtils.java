@@ -1,12 +1,12 @@
 package edu.nccu.cs.utils;
 
-import java.io.IOException;
-
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper;
 import edu.nccu.cs.exception.SystemException;
+
+import java.io.IOException;
 
 public class DataConvertUtils {
 
@@ -17,6 +17,10 @@ public class DataConvertUtils {
         } catch (JacksonException ex) {
             throw new SystemException(ex);
         }
+    }
+
+    public static ObjectMapper jsonMapper() {
+        return new ObjectMapper();
     }
 
 

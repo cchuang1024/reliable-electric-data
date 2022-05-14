@@ -1,6 +1,6 @@
 #!/bin/bash
 
-declare -a SERVICES=("sim-meter" "meter-recorder")
+declare -a SERVICES=("sim-meter" "meter-recorder" "data-sender")
 declare -a PORTS=(8080 8080)
 
 LENGTH=${#SERVICES[@]}
