@@ -1,10 +1,12 @@
-package edu.nccu.cs.dispatchcloud.receiver;
+package edu.nccu.cs.dispatchcloud.manager;
 
 import edu.nccu.cs.dispatchcloud.auth.Authenticator;
-import edu.nccu.cs.dispatchcloud.verifier.FixDataEntity;
-import edu.nccu.cs.dispatchcloud.verifier.VerifierService;
+import edu.nccu.cs.dispatchcloud.fixdata.FixDataEntity;
+import edu.nccu.cs.dispatchcloud.signedmeterdata.SignedMeterDataEntity;
+import edu.nccu.cs.dispatchcloud.signedmeterdata.SignedMeterDataEntity.CheckState;
 import edu.nccu.cs.protocol.MeterDataRequest;
 import edu.nccu.cs.protocol.MeterDataResponse;
+import edu.nccu.cs.protocol.MeterDataResponse.PiggyBackMessage;
 import edu.nccu.cs.protocol.SignedMeterDataRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,8 @@ import java.util.stream.Collectors;
 
 import static edu.nccu.cs.protocol.Constants.PATH_ELECTRIC_DATA;
 import static edu.nccu.cs.protocol.MeterDataResponse.MessageType.*;
+import static edu.nccu.cs.utils.DateTimeUtils.getDefault;
+import static edu.nccu.cs.utils.DateTimeUtils.getNow;
 
 @RestController
 @Slf4j
@@ -39,45 +43,45 @@ public class ReceiverController {
         }
 
         List<SignedMeterDataEntity> entities = handleRequest(request, request.getPayload());
+
         receiverService.saveAll(entities);
 
         List<Long> fixTimestamp = getFixTimestamp();
+
         return MeterDataResponse.builder()
                                 .cloudTime(System.currentTimeMillis())
-                                .message(MeterDataResponse.PiggyBackMessage.builder()
-                                                                           .type(fixTimestamp.isEmpty() ? SUCCESS : FIX)
-                                                                           .payload(fixTimestamp)
-                                                                           .build())
+                                .message(PiggyBackMessage.builder()
+                                                         .type(fixTimestamp.isEmpty() ? SUCCESS : FIX)
+                                                         .payload(fixTimestamp)
+                                                         .build())
                                 .build();
     }
 
     public MeterDataResponse getNotAuthorizedResponse() {
         return MeterDataResponse.builder()
                                 .cloudTime(System.currentTimeMillis())
-                                .message(MeterDataResponse.PiggyBackMessage.builder()
-                                                                           .type(NOT_AUTHORIZED)
-                                                                           .payload(null)
-                                                                           .build())
+                                .message(PiggyBackMessage.builder()
+                                                         .type(NOT_AUTHORIZED)
+                                                         .payload(null)
+                                                         .build())
                                 .build();
     }
 
     public List<SignedMeterDataEntity> handleRequest(MeterDataRequest<?> request, List<SignedMeterDataRequest> payload) {
         return payload.stream()
-                      .map(p -> SignedMeterDataEntity.builder()
-                                                     .edgeId(request.getApplicationId())
-                                                     .timestamp(p.getTimestamp())
-                                                     .preTimestamp(p.getPreTimestamp())
-                                                     .energy(p.getEnergy())
-                                                     .power(p.getPower())
-                                                     .signature(p.getSignature())
-                                                     .build())
+                      .map(p -> receiverService.buildInitEntity(request.getApplicationId(), p))
                       .collect(Collectors.toList());
     }
 
     public List<Long> getFixTimestamp() {
-        return verifierService.getInitFixData()
-                              .stream()
-                              .map(FixDataEntity::getTimestamp)
-                              .collect(Collectors.toList());
+        List<FixDataEntity> fixData = verifierService.getInitFixData();
+
+        if (!fixData.isEmpty()) {
+            verifierService.updateFixDataToWait(fixData);
+        }
+
+        return fixData.stream()
+                      .map(FixDataEntity::getTimestamp)
+                      .collect(Collectors.toList());
     }
 }

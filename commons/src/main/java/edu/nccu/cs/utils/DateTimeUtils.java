@@ -1,10 +1,7 @@
 package edu.nccu.cs.utils;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
+import java.sql.Timestamp;
+import java.time.*;
 
 public class DateTimeUtils {
 
@@ -21,7 +18,7 @@ public class DateTimeUtils {
         return ZoneOffset.ofHours(8);
     }
 
-    public static ZoneId getZoneId(){
+    public static ZoneId getZoneId() {
         return ZoneId.of("UTF+8");
     }
 
@@ -29,7 +26,16 @@ public class DateTimeUtils {
         return ldt.toInstant(getZoneOffset()).toEpochMilli();
     }
 
-    public static LocalDateTime localDateTimeFromTimestamp(long timestamp){
+    public static LocalDateTime localDateTimeFromTimestamp(long timestamp) {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), getZoneId());
     }
+
+    public static Timestamp getNow() {
+        return new Timestamp(System.currentTimeMillis());
+    }
+
+    public static Timestamp getDefault() {
+        return new Timestamp(0L);
+    }
+
 }

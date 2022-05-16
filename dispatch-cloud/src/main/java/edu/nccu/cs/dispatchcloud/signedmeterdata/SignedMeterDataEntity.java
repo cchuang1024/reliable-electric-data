@@ -1,9 +1,11 @@
-package edu.nccu.cs.dispatchcloud.receiver;
+package edu.nccu.cs.dispatchcloud.signedmeterdata;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.groocraft.couchdb.slacker.DocumentBase;
 import com.groocraft.couchdb.slacker.annotation.Document;
 import lombok.*;
+
+import java.sql.Timestamp;
 
 @Document("meter")
 @Getter
@@ -13,6 +15,9 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SignedMeterDataEntity extends DocumentBase {
+
+    public static final long FIRST_PRETIMESTAMP = 0L;
+
     @JsonProperty("edgeId")
     private String edgeId;
 
@@ -30,4 +35,22 @@ public class SignedMeterDataEntity extends DocumentBase {
 
     @JsonProperty("preTimestamp")
     private Long preTimestamp;
+
+    @JsonProperty("checkState")
+    private CheckState checkState;
+
+    @JsonProperty("initTime")
+    private Timestamp initTime;
+
+    @JsonProperty("fixTime")
+    private Timestamp fixTime;
+
+    @JsonProperty("doneTime")
+    private Timestamp doneTime;
+
+    public enum CheckState {
+        INIT,
+        FIX,
+        DONE
+    }
 }
