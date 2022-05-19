@@ -1,11 +1,8 @@
 spring:
   data:
     mongodb:
-      host: 127.0.0.1
-      port: 37017
-      database: meter
-      username: nccu
-      password: nccu
+      uri: "mongodb://nccu:nccu@localhost:37017/meter?authSource=admin&authMechanism=SCRAM-SHA-1"
+      auto-index-creation: true
 
 zookeeper:
   connectString: "127.0.0.1:32181,127.0.0.1:32182,127.0.0.1:32183"

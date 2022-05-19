@@ -38,6 +38,7 @@ services:
     volumes:
       - cloud-data:/data/db
       - /usr/share/zoneinfo/Asia/Taipei:/etc/localtime:ro
+      - ./create-db.js:/docker-entrypoint-initdb.d/create-db.js:ro
     environment:
       MONGO_INITDB_ROOT_USERNAME: nccu
       MONGO_INITDB_ROOT_PASSWORD: nccu

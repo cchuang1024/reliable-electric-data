@@ -2,6 +2,7 @@ package edu.nccu.cs.utils;
 
 import java.sql.Timestamp;
 import java.time.*;
+import java.util.Date;
 
 public class DateTimeUtils {
 
@@ -30,12 +31,12 @@ public class DateTimeUtils {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), getZoneId());
     }
 
-    public static Timestamp getNow() {
-        return new Timestamp(System.currentTimeMillis());
+    public static Date getNow() {
+        return new Date(System.currentTimeMillis());
     }
 
-    public static Timestamp getDefault() {
-        return new Timestamp(0L);
+    public static Date getDefault() {
+        return new Date(0L);
     }
 
 }

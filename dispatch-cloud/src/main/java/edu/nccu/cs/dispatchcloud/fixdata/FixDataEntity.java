@@ -1,11 +1,10 @@
 package edu.nccu.cs.dispatchcloud.fixdata;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import edu.nccu.cs.entity.DocumentBase;
+import edu.nccu.cs.dispatchcloud.common.DocumentBase;
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 @Document("fix_data")
 @Getter
@@ -15,20 +14,11 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FixDataEntity extends DocumentBase {
-    @JsonProperty("timestamp")
     private Long timestamp;
-
-    @JsonProperty("state")
     private FixState state;
-
-    @JsonProperty("initTime")
-    private Timestamp initTime;
-
-    @JsonProperty("waitTime")
-    private Timestamp waitTime;
-
-    @JsonProperty("doneTime")
-    private Timestamp doneTime;
+    private Date initTime;
+    private Date waitTime;
+    private Date doneTime;
 
     public FixDataEntity init() {
         String id = String.format("FIX::%d", timestamp);

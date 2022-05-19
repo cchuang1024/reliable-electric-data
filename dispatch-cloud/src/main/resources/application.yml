@@ -9,11 +9,9 @@ logging:
 spring:
   data:
     mongodb:
-      host: 192.168.1.52
-      port: 37017
-      database: meter
-      username: nccu
-      password: nccu
+      uri: "mongodb://nccu:nccu@localhost:37017/meter?authSource=admin&authMechanism=SCRAM-SHA-1"
+      auto-index-creation: true
+
 
 
 zookeeper:
