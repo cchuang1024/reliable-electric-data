@@ -1,14 +1,14 @@
-couchdb:
-  client:
-    url: http://192.168.1.52:35984/
-    username: nccu
-    password: nccu
-    query-strategy: view
-    schema-operation: create
-    initialization-strategy: single
+spring:
+  data:
+    mongodb:
+      host: 127.0.0.1
+      port: 37017
+      database: meter
+      username: nccu
+      password: nccu
 
 zookeeper:
-  connectString: "192.168.1.52:32181,192.168.1.52:32182,192.168.1.52:32183"
+  connectString: "127.0.0.1:32181,127.0.0.1:32182,127.0.0.1:32183"
   maxRetries: 3
   baseSleepTimeMs: 1000
   connectionTimeout: 30000

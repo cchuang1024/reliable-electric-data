@@ -45,13 +45,15 @@ public class VerifierService {
     }
 
     public void createFixData(Set<Long> fixData) {
-        fixData.forEach(timestamp -> fixDataRepository.save(FixDataEntity.builder()
-                                                                         .timestamp(timestamp)
-                                                                         .state(INIT)
-                                                                         .initTime(getNow())
-                                                                         .waitTime(getDefault())
-                                                                         .doneTime(getDefault())
-                                                                         .build()));
+        fixData.forEach(timestamp ->
+                fixDataRepository.save(FixDataEntity.builder()
+                                                    .timestamp(timestamp)
+                                                    .state(INIT)
+                                                    .initTime(getNow())
+                                                    .waitTime(getDefault())
+                                                    .doneTime(getDefault())
+                                                    .build()
+                                                    .init()));
     }
 
     public void updateToDone(Set<Long> doneTimestamps) {

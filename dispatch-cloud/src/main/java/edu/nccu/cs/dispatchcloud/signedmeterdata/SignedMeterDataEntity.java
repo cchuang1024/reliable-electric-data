@@ -1,9 +1,9 @@
 package edu.nccu.cs.dispatchcloud.signedmeterdata;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.groocraft.couchdb.slacker.DocumentBase;
-import com.groocraft.couchdb.slacker.annotation.Document;
+import edu.nccu.cs.entity.DocumentBase;
 import lombok.*;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.sql.Timestamp;
 
@@ -47,6 +47,12 @@ public class SignedMeterDataEntity extends DocumentBase {
 
     @JsonProperty("doneTime")
     private Timestamp doneTime;
+
+    public SignedMeterDataEntity init() {
+        String id = String.format("%s::%d", edgeId, timestamp);
+        super.setId(id);
+        return this;
+    }
 
     public enum CheckState {
         INIT,

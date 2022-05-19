@@ -128,6 +128,7 @@ public class ReceiverService {
                                     .initTime(getNow())
                                     .fixTime(getDefault())
                                     .doneTime(getDefault())
-                                    .build();
+                                    .build()
+                                    .init();
     }
 }

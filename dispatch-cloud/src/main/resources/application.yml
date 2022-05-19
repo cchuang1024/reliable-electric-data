@@ -6,17 +6,17 @@ server:
 logging:
   config: classpath:logback-spring.xml
 
-couchdb:
-  client:
-    url: http://192.168.1.52:35984/
-    username: nccu
-    password: nccu
-    query-strategy: view
-    schema-operation: create
-    initialization-strategy: single
+spring:
+  data:
+    mongodb:
+      host: 192.168.1.52
+      port: 37017
+      database: meter
+      username: nccu
+      password: nccu
+
 
 zookeeper:
-  # connectString: "zoo1:2181,zoo2:2181,zoo3:2181"
   connectString: "192.168.1.52:32181,192.168.1.52:32182,192.168.1.52:32183"
   maxRetries: 3
   baseSleepTimeMs: 1000

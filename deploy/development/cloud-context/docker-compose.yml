@@ -31,16 +31,35 @@ services:
       ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
 
   cloud-base:
-    image: couchdb
+    image: mongo
+    restart: always
+    ports:
+      - 37017:27017
+    volumes:
+      - cloud-data:/data/db
+      - /usr/share/zoneinfo/Asia/Taipei:/etc/localtime:ro
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: nccu
+      MONGO_INITDB_ROOT_PASSWORD: nccu
+      TZ: Asia/Taipei
+
+  cloud-base-ui:
+    image: mongo-express
     restart: always
     volumes:
-      - cloud-data:/opt/couchdb/data
+      - /usr/share/zoneinfo/Asia/Taipei:/etc/localtime:ro
     ports:
-      - 35984:5984
+      - 38081:8081
     environment:
+      ME_CONFIG_BASICAUTH_USERNAME: nccu
+      ME_CONFIG_BASICAUTH_PASSWORD: nccu
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: 'true'
+      ME_CONFIG_MONGODB_ADMINUSERNAME: nccu
+      ME_CONFIG_MONGODB_ADMINPASSWORD: nccu
+      ME_CONFIG_MONGODB_SERVER: cloud-base
       TZ: Asia/Taipei
-      COUCHDB_USER: nccu
-      COUCHDB_PASSWORD: nccu
+    depends_on:
+      - cloud-base
 
 volumes:
   cloud-data: { }

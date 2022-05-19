@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -50,6 +51,37 @@ public class ReceiverServiceTest {
                                                       .collect(Collectors.toList());
 
         assertThat(entities.size()).isEqualTo(payload.size());
+    }
+
+    @Test
+    public void testIdempotent() {
+        meterDataRepository.deleteAll();
+
+        List<SignedMeterDataRequest> payload = prepareCompletePayload();
+        List<SignedMeterDataEntity> entities1 = payload.stream()
+                                                       .map(p -> receiverService.buildInitEntity(TEST_APPLICATION_ID, p))
+                                                       .collect(Collectors.toList());
+
+        meterDataRepository.saveAll(entities1);
+
+        List<SignedMeterDataEntity> first = StreamSupport.stream(meterDataRepository.findAll().spliterator(), false)
+                                                         .collect(Collectors.toList());
+        assertThat(first.size()).isEqualTo(entities1.size());
+
+        List<SignedMeterDataEntity> entities2 = payload.stream()
+                                                       .map(p -> receiverService.buildInitEntity(TEST_APPLICATION_ID, p))
+                                                       .collect(Collectors.toList());
+
+        meterDataRepository.saveAll(entities2);
+
+        List<SignedMeterDataEntity> second = StreamSupport.stream(meterDataRepository.findAll().spliterator(), false)
+                                                          .collect(Collectors.toList());
+
+        assertThat(second.size()).isEqualTo(entities2.size())
+                                 .isEqualTo(first.size())
+                                 .isEqualTo(entities1.size());
+
+        meterDataRepository.deleteAll();
     }
 
     @Test
