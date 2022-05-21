@@ -103,7 +103,7 @@ public class ReceiverService {
             Optional<SignedMeterDataEntity> preEntity = repository.findByTimestamp(income.getPreTimestamp());
 
             Optional<Long> memEntity = currTimestamp.stream()
-                                                    .filter(timestamp -> Objects.equals(timestamp, income.getTimestamp()))
+                                                    .filter(timestamp -> Objects.equals(timestamp, income.getPreTimestamp()))
                                                     .findAny();
 
             if (preEntity.isEmpty() && memEntity.isEmpty()) {

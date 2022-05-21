@@ -11,9 +11,11 @@ import java.util.Set;
 
 @Repository
 public interface FixDataRepository extends CrudRepository<FixDataEntity, String> {
-    List<FixDataEntity> findByState(@Param("state") FixState state);
+    List<FixDataEntity> findByState(FixState state);
 
-    Optional<FixDataEntity> findByTimestamp(@Param("timestamp") Long timestamp);
+    Optional<FixDataEntity> findByTimestamp(Long timestamp);
 
-    List<FixDataEntity> findByTimestampInAndState(@Param("timestamp")Set<Long> timestamps, @Param("state") FixState state);
+    List<FixDataEntity> findByTimestampInAndState(Set<Long> timestamps, FixState state);
+
+    List<FixDataEntity> findByTimestampBetween(Long start, Long end);
 }

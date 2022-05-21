@@ -1,6 +1,5 @@
 package edu.nccu.cs.utils;
 
-import java.sql.Timestamp;
 import java.time.*;
 import java.util.Date;
 
@@ -39,4 +38,7 @@ public class DateTimeUtils {
         return new Date(0L);
     }
 
+    public static Instant toInstant(LocalDateTime ldt) {
+        return ldt.toInstant(getZoneOffset());
+    }
 }

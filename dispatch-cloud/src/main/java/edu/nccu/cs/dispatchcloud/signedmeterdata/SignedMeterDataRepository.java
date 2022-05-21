@@ -10,10 +10,11 @@ import java.util.Optional;
 
 @Repository
 public interface SignedMeterDataRepository extends CrudRepository<SignedMeterDataEntity, String> {
-    Optional<SignedMeterDataEntity> findByTimestamp(@Param("timestamp") Long timestamp);
+    Optional<SignedMeterDataEntity> findByTimestamp(Long timestamp);
 
-    Optional<SignedMeterDataEntity> findByPreTimestampAndCheckState(@Param("preTimestamp") Long preTimestamp,
-                                                                    @Param("checkState") CheckState checkState);
+    List<SignedMeterDataEntity> findByTimestampBetween(Long start, Long end);
 
-    List<SignedMeterDataEntity> findByCheckState(@Param("checkState") CheckState checkState);
+    Optional<SignedMeterDataEntity> findByPreTimestampAndCheckState(Long preTimestamp, CheckState checkState);
+
+    List<SignedMeterDataEntity> findByCheckState(CheckState checkState);
 }

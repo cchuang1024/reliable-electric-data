@@ -3,27 +3,29 @@ package edu.nccu.cs.dispatchcloud.manager;
 import edu.nccu.cs.dispatchcloud.auth.Authenticator;
 import edu.nccu.cs.dispatchcloud.fixdata.FixDataEntity;
 import edu.nccu.cs.dispatchcloud.signedmeterdata.SignedMeterDataEntity;
-import edu.nccu.cs.dispatchcloud.signedmeterdata.SignedMeterDataEntity.CheckState;
+import edu.nccu.cs.protocol.ElectricDataResponse;
 import edu.nccu.cs.protocol.MeterDataRequest;
 import edu.nccu.cs.protocol.MeterDataResponse;
 import edu.nccu.cs.protocol.MeterDataResponse.PiggyBackMessage;
 import edu.nccu.cs.protocol.SignedMeterDataRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static edu.nccu.cs.protocol.Constants.PATH_ELECTRIC_DATA;
 import static edu.nccu.cs.protocol.MeterDataResponse.MessageType.*;
-import static edu.nccu.cs.utils.DateTimeUtils.getDefault;
-import static edu.nccu.cs.utils.DateTimeUtils.getNow;
 
 @RestController
 @Slf4j
-public class ReceiverController {
+public class ElectricDataController {
 
     @Autowired
     private ReceiverService receiverService;
@@ -32,7 +34,25 @@ public class ReceiverController {
     private VerifierService verifierService;
 
     @Autowired
+    private QuerierService querierService;
+
+    @Autowired
     private Authenticator authenticator;
+
+    @GetMapping(PATH_ELECTRIC_DATA)
+    public ElectricDataResponse<SignedMeterDataEntity, FixDataEntity> getElectricData(
+            @RequestParam("date") String date) {
+        LocalDate ld = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyyMMdd"));
+
+        List<SignedMeterDataEntity> meterData = querierService.getMeterDataByDate(ld);
+        List<FixDataEntity> fixData = querierService.getFixDataByDate(ld);
+
+        return ElectricDataResponse.<SignedMeterDataEntity, FixDataEntity>builder()
+                                   .serverTime(System.currentTimeMillis())
+                                   .meterData(meterData)
+                                   .fixData(fixData)
+                                   .build();
+    }
 
     @PostMapping(PATH_ELECTRIC_DATA)
     public MeterDataResponse receive(MeterDataRequest<SignedMeterDataRequest> request) {
