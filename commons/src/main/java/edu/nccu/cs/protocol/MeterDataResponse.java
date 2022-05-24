@@ -1,18 +1,15 @@
 package edu.nccu.cs.protocol;
 
-import java.util.List;
+import lombok.*;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class MeterDataResponse {
     private Long cloudTime;
     private PiggyBackMessage message;
@@ -22,14 +19,18 @@ public class MeterDataResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class PiggyBackMessage{
+    @ToString
+    public static class PiggyBackMessage {
         private MessageType type;
         private List<Long> payload;
+        private String message;
+        private Throwable cause;
     }
 
     public enum MessageType {
         SUCCESS,
         NOT_AUTHORIZED,
-        FIX;
+        FIX,
+        ERROR;
     }
 }

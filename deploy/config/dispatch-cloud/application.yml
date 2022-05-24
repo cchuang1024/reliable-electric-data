@@ -1,0 +1,21 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+logging:
+  config: classpath:logback-spring.xml
+
+spring:
+  data:
+    mongodb:
+      uri: ${CLOUD_BASE_URL}
+      auto-index-creation: true
+
+
+
+zookeeper:
+  connectString: ${ZK_URL}
+  maxRetries: 3
+  baseSleepTimeMs: 1000
+  connectionTimeout: 30000

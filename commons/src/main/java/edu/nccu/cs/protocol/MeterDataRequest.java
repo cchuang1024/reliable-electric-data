@@ -10,6 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode
+@ToString
 public class MeterDataRequest<T> {
 
     private String applicationId;

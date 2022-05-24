@@ -1,6 +1,14 @@
+server:
+  port: 8181
+  servlet:
+    context-path: /
+
+logging:
+  config: classpath:logback-spring.xml
+
 couchdb:
   client:
-    url: http://192.168.1.52:25985/
+    url: http://127.0.0.1:25985/
     username: nccu
     password: nccu
     query-strategy: view
@@ -8,10 +16,14 @@ couchdb:
     initialization-strategy: single
 
 zookeeper:
-  connectString: "192.168.1.52:32181,192.168.1.52:32182,192.168.1.52:32183"
+  connectString: "127.0.0.1:32181"
   maxRetries: 3
   baseSleepTimeMs: 1000
   connectionTimeout: 30000
 
 application:
   id: data-sender-test
+
+cloud:
+  host: 127.0.0.1
+  port: 8181

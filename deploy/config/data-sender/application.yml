@@ -1,3 +1,6 @@
+logging:
+  config: classpath:logback-spring.xml
+
 couchdb:
   client:
     url: ${DATA_SAVER_URL}
@@ -15,3 +18,7 @@ zookeeper:
 
 application:
   id: ${APPLICATION_ID}
+
+cloud:
+  host: ${CLOUD_HOST}
+  port: ${CLOUD_PORT}

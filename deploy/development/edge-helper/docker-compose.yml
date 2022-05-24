@@ -1,0 +1,45 @@
+version: "3"
+services:
+  sim-meter:
+    image: dispatch-cloud:54320/nccu/sim-meter
+    restart: always
+    volumes:
+      - /usr/share/zoneinfo/Asia/Taipei:/etc/localtime:ro
+    ports:
+      - 28080:8080
+    environment:
+      TZ: Asia/Taipei
+
+  data-saver-1:
+    image: couchdb
+    restart: always
+    volumes:
+      - dev-saver-1-data:/opt/couchdb/data
+    ports:
+      - 25984:5984
+    environment:
+      TZ: Asia/Taipei
+      COUCHDB_USER: nccu
+      COUCHDB_PASSWORD: nccu
+
+  data-saver-2:
+    image: couchdb
+    restart: always
+    volumes:
+      - dev-saver-2-data:/opt/couchdb/data
+    ports:
+      - 25985:5984
+    environment:
+      TZ: Asia/Taipei
+      COUCHDB_USER: nccu
+      COUCHDB_PASSWORD: nccu
+
+volumes:
+  dev-recorder-data: { }
+  dev-saver-1-data: { }
+  dev-saver-2-data: { }
+
+networks:
+  default:
+    external:
+      name: dev-network

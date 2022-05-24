@@ -10,10 +10,7 @@ import edu.nccu.cs.protocol.MeterDataResponse.PiggyBackMessage;
 import edu.nccu.cs.protocol.SignedMeterDataRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -55,7 +52,7 @@ public class ElectricDataController {
     }
 
     @PostMapping(PATH_ELECTRIC_DATA)
-    public MeterDataResponse receive(MeterDataRequest<SignedMeterDataRequest> request) {
+    public MeterDataResponse receive(@RequestBody MeterDataRequest<SignedMeterDataRequest> request) {
         log.warn("received request: {}", request);
 
         if (!authenticator.checkIdAndToken(request.getApplicationId(), request.getToken())) {
