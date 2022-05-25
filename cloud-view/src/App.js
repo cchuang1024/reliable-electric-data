@@ -60,7 +60,7 @@ const initFixDataOptions = () => {
 
         fix.push({
             x: unixToMilli(date.unix()),
-            y: ((i % 3) - 1)
+            y: 0
         });
     }
 
@@ -77,7 +77,7 @@ const initMeterDataOptions = () => {
 
         power.push({
             x: unixToMilli(date.unix()),
-            y: i
+            y: 0
         });
     }
 
@@ -90,15 +90,11 @@ function App() {
     const [auto, setAuto] = useState(true);
     const updateAuto = event => setAuto(event.target.checked);
 
-    const [meterDataOptions, setMeterDataOptions] = useState({});
-    const [fixDataOptions, setFixDataOptions] = useState({});
+    const [meterDataOptions, setMeterDataOptions] = useState(initMeterDataOptions());
+    const [fixDataOptions, setFixDataOptions] = useState(initFixDataOptions());
 
     useEffect(() => {
-        const meterData = initMeterDataOptions();
-        const fixData = initFixDataOptions();
-
-        setMeterDataOptions(meterData);
-        setFixDataOptions(fixData);
+        
     }, []);
 
     return (

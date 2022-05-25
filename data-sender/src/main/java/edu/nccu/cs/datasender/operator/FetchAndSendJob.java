@@ -6,12 +6,15 @@ import edu.nccu.cs.datasender.manager.StateManager;
 import edu.nccu.cs.datasender.signedmeterdata.SignedMeterDataEntity;
 import edu.nccu.cs.datasender.signedmeterdata.SignedMeterDataService;
 import edu.nccu.cs.protocol.MeterDataResponse;
+import edu.nccu.cs.utils.ExceptionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
@@ -37,19 +40,62 @@ public class FetchAndSendJob implements Runnable {
     public void run() {
         if (applicationState.getState() == SenderState.CONNECTED) {
             List<SignedMeterDataEntity> initEntities = service.getInitEntities();
+            List<SignedMeterDataEntity> pendingEntities = service.getPendingEntities();
 
-            MeterDataResponse response = service.sendData(applicationState.getId(), applicationState.getToken(), initEntities);
+            List<SignedMeterDataEntity> sendList = new ArrayList<>();
+            sendList.addAll(initEntities);
+            sendList.addAll(pendingEntities);
 
-            // TODO:
-            // check if post failed and turn to pending
+            MeterDataResponse response = service.sendData(applicationState.getId(), applicationState.getToken(), sendList);
 
-            // check if response contains fix data and turn to pending
-
-            // query pending
-
-            // resend data
-
+            switch (response.getMessage().getType()) {
+                case ERROR:
+                    logError(response);
+                    return;
+                case NOT_AUTHORIZED:
+                    logNotAuthorized();
+                    return;
+                case FIX:
+                    logFix(response);
+                    handlePending(response);
+                    updateToDone(sendList);
+                    return;
+                case SUCCESS:
+                default:
+                    logSuccess();
+                    updateToDone(sendList);
+            }
         }
+    }
 
+    private void updateToDone(List<SignedMeterDataEntity> sendList) {
+        List<Long> timestamps = sendList.stream()
+                                        .map(SignedMeterDataEntity::getTimestamp)
+                                        .collect(Collectors.toList());
+        service.updateToDone(timestamps);
+    }
+
+    private void handlePending(MeterDataResponse response) {
+        List<Long> timestamps = response.getMessage().getPayload();
+        service.updateToPending(timestamps);
+    }
+
+    private void logFix(MeterDataResponse response) {
+        log.warn("have to fix timestamps: {}", response.getMessage().getPayload());
+    }
+
+    private void logSuccess() {
+        log.warn("send succeeded!");
+    }
+
+    private void logError(MeterDataResponse response) {
+        log.error("entities send failed: {}\n{}",
+                response.getMessage().getMessage(),
+                ExceptionUtils.getStackTrace(new Exception(response.getMessage()
+                                                                   .getCause())));
+    }
+
+    private void logNotAuthorized() {
+        log.error("not authorized token: {} of application id {}", applicationState.getToken(), applicationState.getId());
     }
 }

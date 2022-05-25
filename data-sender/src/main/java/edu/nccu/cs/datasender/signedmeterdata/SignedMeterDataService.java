@@ -7,8 +7,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toSet;
 
 @Component
 @Slf4j
@@ -51,5 +55,23 @@ public class SignedMeterDataService {
                                      .preTimestamp(entity.getPreTimestamp())
                                      .signature(entity.getSignature())
                                      .build();
+    }
+
+    public void updateToPending(List<Long> timestamps) {
+        List<SignedMeterDataEntity> entities = repository.findByTimestampIn(new HashSet<>(timestamps));
+
+        entities.forEach(entity->{
+            entity.setState(SignedMeterDataEntity.STATE_PENDING);
+            repository.save(entity);
+        });
+    }
+
+    public void updateToDone(List<Long> timestamps){
+        List<SignedMeterDataEntity> entities = repository.findByTimestampIn(new HashSet<>(timestamps));
+
+        entities.forEach(entity->{
+            entity.setState(SignedMeterDataEntity.STATE_DONE);
+            repository.save(entity);
+        });
     }
 }
