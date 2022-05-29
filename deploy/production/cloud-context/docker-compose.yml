@@ -34,7 +34,7 @@ services:
     image: mongo
     restart: always
     ports:
-      - 37017:27017
+      - 27017:27017
     volumes:
       - cloud-data:/data/db
       - /usr/share/zoneinfo/Asia/Taipei:/etc/localtime:ro
@@ -50,7 +50,7 @@ services:
     volumes:
       - /usr/share/zoneinfo/Asia/Taipei:/etc/localtime:ro
     ports:
-      - 38081:8081
+      - 8081:8081
     environment:
       ME_CONFIG_BASICAUTH_USERNAME: nccu
       ME_CONFIG_BASICAUTH_PASSWORD: nccu

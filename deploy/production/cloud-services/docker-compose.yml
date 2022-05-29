@@ -1,12 +1,23 @@
 version: "3"
 services:
+  cloud-view:
+    image: dispatch-cloud:54320/nccu/cloud-view
+    restart: always
+    volumes:
+      - /usr/share/zoneinfo/Asia/Taipei:/etc/localtime:ro
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      TZ: Asia/Taipei
+
   dispatch-cloud:
     image: dispatch-cloud:54320/nccu/dispatch-cloud
     restart: always
     volumes:
       - /usr/share/zoneinfo/Asia/Taipei:/etc/localtime:ro
     ports:
-      - 38080:8080
+      - 8080:8080
     environment:
       TZ: Asia/Taipei
       CLOUD_BASE_URL: "mongodb://nccu:nccu@cloud-base:27017/meter?authSource=admin&authMechanism=SCRAM-SHA-1"

@@ -1,41 +1,12 @@
 version: "3"
 services:
-  data-saver-1:
-    image: couchdb
+  sim-meter:
+    image: dispatch-cloud:54320/nccu/sim-meter
     restart: always
     volumes:
       - /usr/share/zoneinfo/Asia/Taipei:/etc/localtime:ro
-      - saver-1-data:/opt/couchdb/data
     ports:
-      - 5984:5984
-    environment:
-      TZ: Asia/Taipei
-      COUCHDB_USER: nccu
-      COUCHDB_PASSWORD: nccu
-
-  data-saver-2:
-    image: couchdb
-    restart: always
-    volumes:
-      - /usr/share/zoneinfo/Asia/Taipei:/etc/localtime:ro
-      - saver-2-data:/opt/couchdb/data
-    ports:
-      - 5985:5984
-    environment:
-      TZ: Asia/Taipei
-      COUCHDB_USER: nccu
-      COUCHDB_PASSWORD: nccu
-
-  meter-recorder:
-    image: dispatch-cloud:54320/nccu/meter-recorder
-    restart: always
-    volumes:
-      - /usr/share/zoneinfo/Asia/Taipei:/etc/localtime:ro
-      - recorder-data:/app/DB
+      - 8080:8080
     environment:
       TZ: Asia/Taipei
 
-volumes:
-  recorder-data: { }
-  saver-1-data: { }
-  saver-2-data: { }
