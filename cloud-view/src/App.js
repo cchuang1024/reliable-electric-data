@@ -14,7 +14,6 @@ import {BASE_URL} from "./config";
 
 const unixToMilli = unix => unix * 1000;
 const milliToMin = milli => milli / (1000 * 60);
-const identity = x => x;
 const transState = state => {
     switch (state) {
         case 'INIT':
@@ -98,9 +97,8 @@ const initBaseData = init => {
     return data;
 };
 
-const buildRealData = (data, key, init, trans) => {
+const buildRealData = (data, start, key, init, trans) => {
     const result = initBaseData(init);
-    const start = moment().startOf('day');
     const startMilli = unixToMilli(start.unix());
 
     if (_.isNil(data)) {
@@ -120,28 +118,30 @@ const buildRealData = (data, key, init, trans) => {
     return result;
 };
 
-const buildMeterDataOptions = meterData => {
-    const optionData = buildRealData(meterData, 'power', 0, meter => meter / 100.0);
+const buildMeterDataOptions = (dateStart, meterData) => {
+    const optionData = buildRealData(meterData, dateStart, 'power', 0, meter => meter / 100.0);
     return initBaseOptions('Meter Data', 'Active Power', 'kW', -100, 2000, optionData);
 };
 
-const buildFixDataOptions = fixData => {
-    const optionData = buildRealData(fixData, 'state', null, transState);
+const buildFixDataOptions = (dateStart, fixData) => {
+    const optionData = buildRealData(fixData, dateStart, 'state', null, transState);
     return initBaseOptions('Fix State', 'State', '', -1, 1, optionData);
 };
 
-const dataFetcher = (now, setDisplayData, setAlertMsg) => {
+const dataFetcher = (dataDate, setDisplayData, setAlertMsg) => {
+    const dateStart = dataDate.startOf('day');
+
     axios.get(`${BASE_URL}/electricData`, {
         params: {
-            date: now.format('YYYYMMDD')
+            date: dateStart.format('YYYYMMDD')
         }
     })
         .then(resp => {
             // console.log('response: ', resp);
 
             const {meterData, fixData} = resp.data;
-            const meterDataDisplay = buildMeterDataOptions(meterData);
-            const fixDataDisplay = buildFixDataOptions(fixData);
+            const meterDataDisplay = buildMeterDataOptions(dateStart, meterData);
+            const fixDataDisplay = buildFixDataOptions(dateStart, fixData);
 
             // console.log('meter data: ', meterDataDisplay);
 
@@ -165,7 +165,7 @@ function App() {
         meterData: initMeterDataDisplay,
         fixData: initFixDataDisplay
     });
-    const [dataDate, setDataDate] = useState(moment());
+    const [dataDate, setDataDate] = useState(now);
     const [alertMsg, setAlertMsg] = useState('');
 
     const fetchDataByDate = date => dataFetcher(date, setDisplayData, setAlertMsg);
@@ -177,12 +177,17 @@ function App() {
 
     useEffect(() => {
         clearTimer();
+
+        // console.log("fetch data by date: ", now.format("YYYYMMDD"));
         fetchDataByDate(now);
+
         autoUpdate()
     }, []);
 
     useEffect(() => {
         clearTimer();
+
+        // console.log("fetch data by date: ", dataDate.format("YYYYMMDD"));
         fetchDataByDate(dataDate);
 
         if (isSameDate(now, dataDate)) {
@@ -228,15 +233,17 @@ function App() {
                 </LocalizationProvider>
             </Stack>
 
-            <HighchartsReact
-                highcharts={Highcharts}
-                options={displayData.meterData}
-            />
+            <Stack>
+                <HighchartsReact
+                    highcharts={Highcharts}
+                    options={displayData.meterData}
+                />
 
-            <HighchartsReact
-                highcharts={Highcharts}
-                options={displayData.fixData}
-            />
+                <HighchartsReact
+                    highcharts={Highcharts}
+                    options={displayData.fixData}
+                />
+            </Stack>
         </Container>
     );
 }
