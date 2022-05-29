@@ -41,3 +41,5 @@ DBs/**
 .*pid*
 
 node_modules/
+
+cloud-view/.env
