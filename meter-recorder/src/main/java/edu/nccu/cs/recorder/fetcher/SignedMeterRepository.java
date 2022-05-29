@@ -1,9 +1,5 @@
 package edu.nccu.cs.recorder.fetcher;
 
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.Semaphore;
-
 import edu.nccu.cs.exception.ApplicationException;
 import lombok.extern.slf4j.Slf4j;
 import org.dizitart.no2.Nitrite;
@@ -12,6 +8,10 @@ import org.dizitart.no2.repository.ObjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
+
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.Semaphore;
 
 import static edu.nccu.cs.recorder.fetcher.LatestTimestampEntity.DEFAULT_ID;
 import static org.dizitart.no2.filters.FluentFilter.where;
@@ -42,6 +42,7 @@ public class SignedMeterRepository {
         ObjectRepository<LatestTimestampEntity> timestampRepo = getTimestampRepository();
         LatestTimestampEntity entity = timestampRepo.getById(DEFAULT_ID);
         if (Objects.isNull(entity)) {
+            // log.info("no latest timestamp value.");
             LatestTimestampEntity newEntity =
                     LatestTimestampEntity.builder()
                                          .id(DEFAULT_ID)
@@ -50,6 +51,7 @@ public class SignedMeterRepository {
             timestampRepo.insert(newEntity);
             return newEntity.getTimestamp();
         } else {
+            // log.info("get latest timestamp value: {}", entity.getTimestamp());
             return entity.getTimestamp();
         }
     }
@@ -74,7 +76,9 @@ public class SignedMeterRepository {
         try {
             semaphore.acquire();
             long latestTimestamp = getLatestTimestamp();
+            // log.info("get latest timestamp: {}", latestTimestamp);
             entity.setPreTimestamp(latestTimestamp);
+            log.info("entity is going to be saved: {}", entity);
 
             ObjectRepository<SignedMeterEntity> meterRepo = getMeterRepository();
             meterRepo.insert(entity);

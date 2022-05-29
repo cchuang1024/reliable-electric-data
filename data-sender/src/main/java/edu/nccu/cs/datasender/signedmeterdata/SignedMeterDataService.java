@@ -1,5 +1,6 @@
 package edu.nccu.cs.datasender.signedmeterdata;
 
+import edu.nccu.cs.datasender.common.HttpSender;
 import edu.nccu.cs.protocol.MeterDataRequest;
 import edu.nccu.cs.protocol.MeterDataResponse;
 import edu.nccu.cs.protocol.SignedMeterDataRequest;
@@ -9,10 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toSet;
 
 @Component
 @Slf4j
@@ -20,6 +18,9 @@ public class SignedMeterDataService {
 
     @Autowired
     private SignedMeterDataRepository repository;
+
+    @Autowired
+    private HttpSender sender;
 
     public List<SignedMeterDataEntity> getInitEntities() {
         return repository.findByState(SignedMeterDataEntity.STATE_INIT);
@@ -42,9 +43,7 @@ public class SignedMeterDataService {
                                 .payload(payload)
                                 .build();
 
-
-
-        return null;
+        return sender.sendMeterData(request);
     }
 
     private SignedMeterDataRequest buildPayload(SignedMeterDataEntity entity) {
@@ -60,16 +59,16 @@ public class SignedMeterDataService {
     public void updateToPending(List<Long> timestamps) {
         List<SignedMeterDataEntity> entities = repository.findByTimestampIn(new HashSet<>(timestamps));
 
-        entities.forEach(entity->{
+        entities.forEach(entity -> {
             entity.setState(SignedMeterDataEntity.STATE_PENDING);
             repository.save(entity);
         });
     }
 
-    public void updateToDone(List<Long> timestamps){
+    public void updateToDone(List<Long> timestamps) {
         List<SignedMeterDataEntity> entities = repository.findByTimestampIn(new HashSet<>(timestamps));
 
-        entities.forEach(entity->{
+        entities.forEach(entity -> {
             entity.setState(SignedMeterDataEntity.STATE_DONE);
             repository.save(entity);
         });

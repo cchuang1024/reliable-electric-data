@@ -36,6 +36,7 @@ public class ElectricDataController {
     @Autowired
     private Authenticator authenticator;
 
+    @CrossOrigin
     @GetMapping(PATH_ELECTRIC_DATA)
     public ElectricDataResponse<SignedMeterDataEntity, FixDataEntity> getElectricData(
             @RequestParam("date") String date) {

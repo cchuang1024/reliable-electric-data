@@ -64,3 +64,8 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+bootJar {
+    mainClass = 'edu.nccu.cs.dispatchcloud.DispatchCloudApplication'
+    archiveFileName = 'dispatch-cloud.jar'
+}

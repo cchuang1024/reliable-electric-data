@@ -35,7 +35,6 @@ services:
       COUCHDB_PASSWORD: nccu
 
 volumes:
-  dev-recorder-data: { }
   dev-saver-1-data: { }
   dev-saver-2-data: { }
 

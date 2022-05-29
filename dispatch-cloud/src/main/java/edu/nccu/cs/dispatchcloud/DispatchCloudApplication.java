@@ -20,4 +20,5 @@ public class DispatchCloudApplication {
         SpringApplication application = new SpringApplication(DispatchCloudApplication.class);
         application.run(args);
     }
+
 }

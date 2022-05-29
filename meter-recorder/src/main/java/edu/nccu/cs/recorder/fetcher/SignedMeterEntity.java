@@ -1,15 +1,8 @@
 package edu.nccu.cs.recorder.fetcher;
 
-import java.time.Instant;
-
 import edu.nccu.cs.domain.SignedMeterData;
 import edu.nccu.cs.entity.TemporalEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.dizitart.no2.collection.Document;
 import org.dizitart.no2.index.IndexType;
@@ -18,6 +11,8 @@ import org.dizitart.no2.mapper.NitriteMapper;
 import org.dizitart.no2.repository.annotations.Entity;
 import org.dizitart.no2.repository.annotations.Id;
 import org.dizitart.no2.repository.annotations.Index;
+
+import java.time.Instant;
 
 @Getter
 @Setter
@@ -39,6 +34,17 @@ public class SignedMeterEntity implements TemporalEntity, Mappable {
                                 .energy(data.getMeterData().getEnergy())
                                 .power(data.getMeterData().getPower())
                                 .signature(data.getSignature())
+                                .preTimestamp(0L)
+                                .build();
+    }
+
+    public static synchronized SignedMeterEntity getInstanceByPreAndNowAndData(Instant pre, Instant now, SignedMeterData data) {
+        return SignedMeterEntity.builder()
+                                .timestamp(now.toEpochMilli())
+                                .energy(data.getMeterData().getEnergy())
+                                .power(data.getMeterData().getPower())
+                                .signature(data.getSignature())
+                                .preTimestamp(pre.toEpochMilli())
                                 .build();
     }
 
@@ -48,7 +54,6 @@ public class SignedMeterEntity implements TemporalEntity, Mappable {
     private long power;
     private long energy;
     private String signature;
-
     private long preTimestamp;
 
     @Override
@@ -58,6 +63,7 @@ public class SignedMeterEntity implements TemporalEntity, Mappable {
         document.put("power", getPower());
         document.put("energy", getEnergy());
         document.put("signature", getSignature());
+        document.put("preTimestamp", getPreTimestamp());
 
         return document;
     }
@@ -69,6 +75,7 @@ public class SignedMeterEntity implements TemporalEntity, Mappable {
             setPower(document.get("power", Long.class));
             setEnergy(document.get("energy", Long.class));
             setSignature(document.get("signature", String.class));
+            setPreTimestamp(document.get("preTimestamp", Long.class));
         }
     }
 }

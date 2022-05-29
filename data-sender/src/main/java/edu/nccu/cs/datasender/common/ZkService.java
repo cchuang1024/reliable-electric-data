@@ -36,25 +36,25 @@ public class ZkService {
 
             this.createIdNode(id);
             log.info("ephemeral node {} created with {} at {}", PATH_ID, id, Thread.currentThread().getName());
-        } catch (SystemException nodeExist) {
-            log.info("node had been created.");
-            log.info(ExceptionUtils.getStackTrace(nodeExist));
+        } catch (Exception ex) {
+            log.info("node had been created or other exception.");
+            log.info(ExceptionUtils.getStackTrace(ex));
 
             throw new ApplicationException("node exists.");
         }
     }
 
-    public TypedPair<String> getIdAndToken(){
+    public TypedPair<String> getIdAndToken() {
         byte[] token = zkClient.readData(PATH_TOKEN, true);
         byte[] id = zkClient.readData(PATH_ID, true);
 
         return TypedPair.cons(buildString(id), buildString(token));
     }
 
-    private String buildString(byte[] raw){
-        if(raw == null){
+    private String buildString(byte[] raw) {
+        if (raw == null) {
             return EMPTY_STRING;
-        }else{
+        } else {
             return new String(raw);
         }
     }
@@ -68,13 +68,11 @@ public class ZkService {
         zkClient.createEphemeral(PATH_TOKEN, token.getBytes());
     }
 
-    private void checkNode(String path) throws SystemException {
-        String parentDir = getParentPath(PATH_TOKEN);
+    private void checkNode(String path) {
+        String parentDir = getParentPath(path);
 
         if (!zkClient.exists(parentDir)) {
             this.createParentNode(parentDir);
-        } else if (zkClient.exists(path)) {
-            throw new SystemException();
         }
     }
 
@@ -140,5 +138,13 @@ public class ZkService {
 
     public void close() {
         zkClient.close();
+    }
+
+    public void deleteTokenNode() {
+        zkClient.delete(PATH_TOKEN);
+    }
+
+    public void deleteIdNode() {
+        zkClient.delete(PATH_ID);
     }
 }

@@ -21,7 +21,7 @@ public class MainRunner {
     @Qualifier("taskExecutor")
     private TaskExecutor taskExecutor;
 
-    // @Scheduled(cron = "0 * * * * *")
+    @Scheduled(fixedRate = 30 * 1000L)
     public void fetchAndSend() {
         FetchAndSendJob job = context.getBean(FetchAndSendJob.class);
         taskExecutor.execute(job);
