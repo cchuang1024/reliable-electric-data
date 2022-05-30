@@ -80,3 +80,8 @@ volumes:
   recorder-data: { }
   saver-1-data: { }
   saver-2-data: { }
+
+networks:
+  default:
+    external:
+      name: edge-network

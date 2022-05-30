@@ -64,3 +64,8 @@ services:
 
 volumes:
   cloud-data: {}
+
+networks:
+  default:
+    external:
+      name: cloud-network
