@@ -6,6 +6,10 @@ server:
 logging:
   config: classpath:logback-spring.xml
 
+spring:
+  codec:
+    max-in-memory-size: 10MB
+
 couchdb:
   client:
     url: http://127.0.0.1:25984/
