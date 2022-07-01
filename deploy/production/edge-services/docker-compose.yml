@@ -28,7 +28,7 @@ services:
       CLOUD_HOST: dispatch-cloud
       CLOUD_PORT: 8080
     extra_hosts:
-      - "dispatch-cloud:192.168.0.164"
+      - "dispatch-cloud:192.168.0.186"
 
   data-saver-2:
     image: couchdb
@@ -58,7 +58,7 @@ services:
       CLOUD_HOST: dispatch-cloud
       CLOUD_PORT: 8080
     extra_hosts:
-      - "dispatch-cloud:192.168.0.164"
+      - "dispatch-cloud:192.168.0.186"
 
   meter-recorder:
     image: dispatch-cloud:54320/nccu/meter-recorder
