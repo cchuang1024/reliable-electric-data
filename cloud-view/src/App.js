@@ -1,17 +1,17 @@
-import React, {useEffect, useState} from 'react';
-import {Alert, Collapse, Container, IconButton, Stack, TextField} from "@mui/material";
-import {DataGrid} from "@mui/x-data-grid";
-import {AdapterMoment} from '@mui/x-date-pickers/AdapterMoment';
-import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
-import {DatePicker} from '@mui/x-date-pickers/DatePicker';
+import React, { useEffect, useState } from 'react';
+import { Alert, Box, Collapse, Container, IconButton, Stack, TextField } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import CloseIcon from '@mui/icons-material/Close';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import moment from 'moment';
 import axios from 'axios';
 import _ from 'lodash';
-import {Timer, updateTimer} from "./timer";
-import {BASE_URL} from "./config";
+import { Timer, updateTimer } from "./timer";
+import { BASE_URL } from "./config";
 
 const unixToMilli = unix => unix * 1000;
 const milliToMin = milli => milli / (1000 * 60);
@@ -129,7 +129,7 @@ const buildFixDataOptions = (dateStart, fixData) => {
     return initBaseOptions('Fix State', 'State', '', -1, 1, optionData);
 };
 
-const buildFixDataGrid = (fixData) => fixData.map(data=>({
+const buildFixDataGrid = (fixData) => fixData.map(data => ({
     id: data.timestamp,
     timestamp: moment(data.timestamp).format('YYYY/MM/DD HH:mm:ss'),
     state: data.state,
@@ -139,9 +139,9 @@ const buildFixDataGrid = (fixData) => fixData.map(data=>({
 }));
 
 const GRID_COL_DEF = [
-    { field: 'id', headerName: 'id', width: 100 },
+    { field: 'id', headerName: '時戳', width: 130 },
     { field: 'timestamp', headerName: '資料時間', width: 250 },
-    { field: 'state', headerName: '資料狀態', width: 180 },
+    { field: 'state', headerName: '資料狀態', width: 150 },
     { field: 'initTime', headerName: '初始化時間', width: 250 },
     { field: 'fixTime', headerName: '補值時間', width: 250 },
     { field: 'doneTime', headerName: '完成時間', width: 250 },
@@ -158,7 +158,7 @@ const dataFetcher = (dataDate, setDisplayData, setAlertMsg) => {
         .then(resp => {
             // console.log('response: ', resp);
 
-            const {meterData, fixData} = resp.data;
+            const { meterData, fixData } = resp.data;
             const meterDataDisplay = buildMeterDataOptions(dateStart, meterData);
             // const fixDataDisplay = buildFixDataOptions(dateStart, fixData);
             const fixDataDisplay = buildFixDataGrid(fixData);
@@ -170,9 +170,9 @@ const dataFetcher = (dataDate, setDisplayData, setAlertMsg) => {
                 fixData: fixDataDisplay
             });
         }).catch(ex => {
-        console.error('error: ', ex);
-        setAlertMsg(ex.message);
-    });
+            console.error('error: ', ex);
+            setAlertMsg(ex.message);
+        });
 };
 
 function App() {
@@ -218,22 +218,22 @@ function App() {
 
     return (
         <Container maxWidth="xl">
-            <Stack sx={{width: '100%'}} spacing={2}>
+            <Stack sx={{ width: '100%' }} spacing={2}>
                 <Collapse in={!_.isEmpty(alertMsg.split(''))}>
                     <Alert severity="error"
-                           action={
-                               <IconButton
-                                   aria-label="close"
-                                   color="inherit"
-                                   size="small"
-                                   onClick={() => {
-                                       setAlertMsg('');
-                                   }}
-                               >
-                                   <CloseIcon fontSize="inherit"/>
-                               </IconButton>
-                           }
-                           sx={{mb: 2}}>
+                        action={
+                            <IconButton
+                                aria-label="close"
+                                color="inherit"
+                                size="small"
+                                onClick={() => {
+                                    setAlertMsg('');
+                                }}
+                            >
+                                <CloseIcon fontSize="inherit" />
+                            </IconButton>
+                        }
+                        sx={{ mb: 2 }}>
                         {alertMsg}
                     </Alert>
                 </Collapse>
@@ -265,14 +265,15 @@ function App() {
                     options={displayData.fixData}
                 />
                 */}
-                <DataGrid
-                    rows={displayData.fixData}
-                    columns={GRID_COL_DEF}
-                    pageSize={5}
-                    rowsPerPageOptions={[5]}
-                    checkboxSelection
-                    disableSelectionOnClick
-                />
+                <Box sx={{ height: 400, width: '100%' }}>
+                    <DataGrid
+                        rows={displayData.fixData}
+                        columns={GRID_COL_DEF}
+                        pageSize={10}
+                        rowsPerPageOptions={[10]}
+                    />
+                </Box>
+
             </Stack>
         </Container>
     );
