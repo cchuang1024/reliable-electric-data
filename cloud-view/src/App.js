@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Alert, Collapse, Container, IconButton, Stack, TextField} from "@mui/material";
+import {DataGrid} from "@mui/x-data-grid";
 import {AdapterMoment} from '@mui/x-date-pickers/AdapterMoment';
 import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
@@ -128,6 +129,24 @@ const buildFixDataOptions = (dateStart, fixData) => {
     return initBaseOptions('Fix State', 'State', '', -1, 1, optionData);
 };
 
+const buildFixDataGrid = (fixData) => fixData.map(data=>({
+    id: data.timestamp,
+    timestamp: moment(data.timestamp).format('YYYY/MM/DD HH:mm:ss'),
+    state: data.state,
+    initTime: moment(data.initTime).format("YYYY/MM/DD HH:mm:ss"),
+    fixTime: moment(data.fixTime).format("YYYY/MM/DD HH:mm:ss"),
+    doneTime: moment(data.doneTime).format("YYYY/MM/DD HH:mm:ss"),
+}));
+
+const GRID_COL_DEF = [
+    { field: 'id', headerName: 'id', width: 100 },
+    { field: 'timestamp', headerName: '資料時間', width: 250 },
+    { field: 'state', headerName: '資料狀態', width: 180 },
+    { field: 'initTime', headerName: '初始化時間', width: 250 },
+    { field: 'fixTime', headerName: '補值時間', width: 250 },
+    { field: 'doneTime', headerName: '完成時間', width: 250 },
+];
+
 const dataFetcher = (dataDate, setDisplayData, setAlertMsg) => {
     const dateStart = dataDate.startOf('day');
 
@@ -141,7 +160,8 @@ const dataFetcher = (dataDate, setDisplayData, setAlertMsg) => {
 
             const {meterData, fixData} = resp.data;
             const meterDataDisplay = buildMeterDataOptions(dateStart, meterData);
-            const fixDataDisplay = buildFixDataOptions(dateStart, fixData);
+            // const fixDataDisplay = buildFixDataOptions(dateStart, fixData);
+            const fixDataDisplay = buildFixDataGrid(fixData);
 
             // console.log('meter data: ', meterDataDisplay);
 
@@ -163,7 +183,8 @@ function App() {
 
     const [displayData, setDisplayData] = useState({
         meterData: initMeterDataDisplay,
-        fixData: initFixDataDisplay
+        // fixData: initFixDataDisplay
+        fixData: []
     });
     const [dataDate, setDataDate] = useState(now);
     const [alertMsg, setAlertMsg] = useState('');
@@ -238,10 +259,19 @@ function App() {
                     highcharts={Highcharts}
                     options={displayData.meterData}
                 />
-
+                {/*
                 <HighchartsReact
                     highcharts={Highcharts}
                     options={displayData.fixData}
+                />
+                */}
+                <DataGrid
+                    rows={displayData.fixData}
+                    columns={GRID_COL_DEF}
+                    pageSize={5}
+                    rowsPerPageOptions={[5]}
+                    checkboxSelection
+                    disableSelectionOnClick
                 />
             </Stack>
         </Container>

@@ -45,6 +45,7 @@ public class FetchAndSendJob implements Runnable {
         log.info("run fetch all data.");
         if (applicationState.getState() == SenderState.CONNECTED) {
             List<SignedMeterDataEntity> sendList = service.collectSendList();
+            log.info("send list: {}", sendList);
             int sendTimes = service.calculateSendTimes(applicationState.getMaxData(), sendList.size());
 
             for (int i = 0; i < sendTimes; i++) {

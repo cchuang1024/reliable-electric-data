@@ -101,7 +101,7 @@ public class SignedMeterDataService {
 
         log.info("entities need to be fixed: {}", entities);
 
-        for(SignedMeterDataEntity entity : entities){
+        for (SignedMeterDataEntity entity : entities) {
             entity.setState(SignedMeterDataEntity.STATE_PENDING);
             repository.save(entity);
         }
@@ -124,7 +124,9 @@ public class SignedMeterDataService {
         sendList.addAll(initEntities);
         sendList.addAll(pendingEntities);
 
-        return sendList;
+        return sendList.stream()
+                       .sorted(Comparator.comparing(SignedMeterDataEntity::getTimestamp))
+                       .collect(Collectors.toList());
     }
 
     public List<SignedMeterDataEntity> collectLimitedSendList(Integer maxData) {

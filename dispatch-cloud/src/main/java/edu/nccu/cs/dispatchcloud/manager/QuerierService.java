@@ -36,4 +36,12 @@ public class QuerierService {
 
         return fixDataRepository.findByTimestampBetween(start.toEpochMilli(), end.toEpochMilli());
     }
+
+    public List<SignedMeterDataEntity> getMeterDataBetweenPreTimestamp(long start, long end) {
+        return meterDataRepository.findByPreTimestampBetween(start, end);
+    }
+
+    public List<SignedMeterDataEntity> getMeterDataBetweenTimestamp(long start, long end) {
+        return meterDataRepository.findByTimestampBetween(start, end);
+    }
 }

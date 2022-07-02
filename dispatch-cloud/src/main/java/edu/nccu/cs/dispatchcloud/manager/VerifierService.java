@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -59,15 +60,20 @@ public class VerifierService {
     }
 
     public void createFixData(Set<Long> fixData) {
-        fixData.forEach(timestamp ->
-                fixDataRepository.save(FixDataEntity.builder()
-                                                    .timestamp(timestamp)
-                                                    .state(INIT)
-                                                    .initTime(getNow())
-                                                    .waitTime(getDefault())
-                                                    .doneTime(getDefault())
-                                                    .build()
-                                                    .init()));
+        fixData.forEach(timestamp -> {
+            Optional<FixDataEntity> origFixData = fixDataRepository.findByTimestamp(timestamp);
+            if (origFixData.isEmpty()) {
+                FixDataEntity newFixData = FixDataEntity.builder()
+                                                        .timestamp(timestamp)
+                                                        .state(INIT)
+                                                        .initTime(getNow())
+                                                        .waitTime(getDefault())
+                                                        .doneTime(getDefault())
+                                                        .build()
+                                                        .init();
+                fixDataRepository.save(newFixData);
+            }
+        });
     }
 
     public void updateToDone(Set<Long> doneTimestamps) {

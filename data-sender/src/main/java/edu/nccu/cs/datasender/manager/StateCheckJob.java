@@ -35,6 +35,7 @@ public class StateCheckJob implements Runnable {
                 break;
             case DISCONNECTED:
                 log.warn("DISCONNECTED state, check connection.");
+                stateManager.connect();
                 stateManager.check();
                 break;
             case DESTROY:

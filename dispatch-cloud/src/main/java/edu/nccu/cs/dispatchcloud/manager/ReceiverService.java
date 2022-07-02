@@ -83,7 +83,7 @@ public class ReceiverService {
         Optional<SignedMeterDataEntity> fixEntity = repository.findByPreTimestampAndCheckState(income.getTimestamp(), CheckState.FIX);
 
         if (fixEntity.isPresent()) {
-            BeanUtils.copyProperties(fixEntity, income);
+            BeanUtils.copyProperties(fixEntity.get(), income);
 
             income.setCheckState(CheckState.DONE);
             income.setDoneTime(getNow());
@@ -130,5 +130,15 @@ public class ReceiverService {
                                     .doneTime(getDefault())
                                     .build()
                                     .init();
+    }
+
+    public void updateDataToFix(Set<Long> preTimestamps) {
+        List<SignedMeterDataEntity> entities = repository.findByPreTimestampIn(preTimestamps);
+        for (SignedMeterDataEntity entity : entities) {
+            entity.setCheckState(CheckState.FIX);
+            entity.setFixTime(getNow());
+
+            repository.save(entity);
+        }
     }
 }

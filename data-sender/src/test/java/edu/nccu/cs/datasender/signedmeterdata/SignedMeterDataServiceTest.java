@@ -21,6 +21,18 @@ public class SignedMeterDataServiceTest {
     private ApplicationState applicationState;
 
     @Test
+    public void testGetPendingEntities(){
+        List<SignedMeterDataEntity> pending = service.getPendingEntities();
+        log.info("pending list: {}", pending);
+    }
+
+    @Test
+    public void testCollectSendList(){
+        List<SignedMeterDataEntity> sendList = service.collectSendList();
+        log.info("send list: {}", sendList);
+    }
+
+    @Test
     public void testCollectLimitedSendList() {
         SignedMeterDataRepository repository = Mockito.mock(SignedMeterDataRepository.class);
         Mockito.when(repository.findByState(SignedMeterDataEntity.STATE_INIT)).thenReturn(prepareInitData());
