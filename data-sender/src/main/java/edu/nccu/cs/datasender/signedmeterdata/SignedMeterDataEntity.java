@@ -3,6 +3,7 @@ package edu.nccu.cs.datasender.signedmeterdata;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.groocraft.couchdb.slacker.DocumentBase;
 import com.groocraft.couchdb.slacker.annotation.Document;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -11,6 +12,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
+@Builder
 public class SignedMeterDataEntity extends DocumentBase {
 
     public static final String STATE_INIT = "init";

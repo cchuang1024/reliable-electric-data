@@ -8,8 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -22,6 +21,10 @@ public class SignedMeterDataService {
     @Autowired
     private HttpSender sender;
 
+    public void setRepository(SignedMeterDataRepository repository) {
+        this.repository = repository;
+    }
+
     public List<SignedMeterDataEntity> getInitEntities() {
         return repository.findByState(SignedMeterDataEntity.STATE_INIT);
     }
@@ -30,7 +33,39 @@ public class SignedMeterDataService {
         return repository.findByState(SignedMeterDataEntity.STATE_PENDING);
     }
 
-    public MeterDataResponse sendData(String applicationId, String token, List<SignedMeterDataEntity> entities) {
+    public MeterDataResponse sendData(String applicationId, String token, Integer maxData, List<SignedMeterDataEntity> entities) {
+        if (entities.size() > maxData) {
+            return splitAndSend(applicationId, token, maxData, entities);
+        } else {
+            return directlySend(applicationId, token, entities);
+        }
+    }
+
+    private MeterDataResponse splitAndSend(String applicationId, String token, Integer maxData, List<SignedMeterDataEntity> entities) {
+        MeterDataResponse response;
+
+        int sendTimes = calculateSendTimes(maxData, entities.size());
+        for (int i = 0; i < sendTimes; i++) {
+            int start = i * maxData;
+            int boundary = Math.min(((i + 1) * maxData), entities.size());
+
+            List<SignedMeterDataEntity> subEntities = entities.subList(start, boundary);
+
+            response = directlySend(applicationId, token, subEntities);
+
+
+        }
+        return null;
+    }
+
+    public int calculateSendTimes(Integer maxData, Integer entitySize) {
+        int remain = entitySize % maxData;
+        int times = entitySize / maxData;
+        return times + (remain > 0 ? 1 : 0);
+    }
+
+    public MeterDataResponse directlySend(String applicationId, String token, List<SignedMeterDataEntity> entities) {
+        log.info("directly send to cloud.");
         List<SignedMeterDataRequest> payload =
                 entities.stream()
                         .map(this::buildPayload)
@@ -72,5 +107,25 @@ public class SignedMeterDataService {
             entity.setState(SignedMeterDataEntity.STATE_DONE);
             repository.save(entity);
         });
+    }
+
+    public List<SignedMeterDataEntity> collectSendList() {
+        List<SignedMeterDataEntity> initEntities = getInitEntities();
+        List<SignedMeterDataEntity> pendingEntities = getPendingEntities();
+
+        List<SignedMeterDataEntity> sendList = new ArrayList<>();
+        sendList.addAll(initEntities);
+        sendList.addAll(pendingEntities);
+
+        return sendList;
+    }
+
+    public List<SignedMeterDataEntity> collectLimitedSendList(Integer maxData) {
+        List<SignedMeterDataEntity> allData = collectSendList();
+
+        return allData.stream()
+                      .sorted(Comparator.comparing(SignedMeterDataEntity::getTimestamp, Comparator.reverseOrder()))
+                      .collect(Collectors.toList())
+                      .subList(0, maxData);
     }
 }

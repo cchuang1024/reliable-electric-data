@@ -25,6 +25,9 @@ services:
       DATA_SAVER_URL: http://data-saver-1:5984/
       ZK_URL: "dispatch-cloud:2181,dispatch-cloud:2182,dispatch-cloud:2183"
       APPLICATION_ID: data-sender-1
+      APPLICATION_MAX_DATA: 10
+      # APPLICATION_STRATEGY: LIMITED
+      APPLICATION_STRATEGY: ALL
       CLOUD_HOST: dispatch-cloud
       CLOUD_PORT: 8080
     extra_hosts:
@@ -55,6 +58,9 @@ services:
       DATA_SAVER_URL: http://data-saver-2:5984/
       ZK_URL: "dispatch-cloud:2181,dispatch-cloud:2182,dispatch-cloud:2183"
       APPLICATION_ID: data-sender-2
+      APPLICATION_MAX_DATA: 10
+      # APPLICATION_STRATEGY: LIMITED
+      APPLICATION_STRATEGY: ALL
       CLOUD_HOST: dispatch-cloud
       CLOUD_PORT: 8080
     extra_hosts:

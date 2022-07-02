@@ -18,6 +18,8 @@ zookeeper:
 
 application:
   id: ${APPLICATION_ID}
+  max-data: ${APPLICATION_MAX_DATA:10}
+  strategy: ${APPLICATION_STRATEGY:ALL}
 
 cloud:
   host: ${CLOUD_HOST}

@@ -8,7 +8,7 @@ logging:
 
 spring:
   codec:
-    max-in-memory-size: 30MB
+    max-in-memory-size: 10MB
   data:
     mongodb:
       uri: "mongodb://nccu:nccu@localhost:37017/meter?authSource=admin&authMechanism=SCRAM-SHA-1"

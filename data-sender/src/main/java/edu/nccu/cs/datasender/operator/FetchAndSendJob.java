@@ -2,7 +2,6 @@ package edu.nccu.cs.datasender.operator;
 
 import edu.nccu.cs.datasender.manager.ApplicationState;
 import edu.nccu.cs.datasender.manager.SenderState;
-import edu.nccu.cs.datasender.manager.StateManager;
 import edu.nccu.cs.datasender.signedmeterdata.SignedMeterDataEntity;
 import edu.nccu.cs.datasender.signedmeterdata.SignedMeterDataService;
 import edu.nccu.cs.protocol.MeterDataResponse;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,48 +21,69 @@ import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROT
 @Slf4j
 public class FetchAndSendJob implements Runnable {
 
-    private StateManager stateManager;
-    private ApplicationState applicationState;
-    private SignedMeterDataService service;
+    private final ApplicationState applicationState;
+    private final SignedMeterDataService service;
 
     @Autowired
-    public FetchAndSendJob(StateManager stateManager,
-                           ApplicationState applicationState,
-                           SignedMeterDataService service) {
-        this.stateManager = stateManager;
+    public FetchAndSendJob(ApplicationState applicationState, SignedMeterDataService service) {
         this.applicationState = applicationState;
         this.service = service;
     }
 
     @Override
     public void run() {
+        if (applicationState.isStrategyAll()) {
+            runFetchAll();
+        } else if (applicationState.isStrategeLimited()) {
+            runFetchLimitedData();
+        } else {
+            log.error("unsupported strategy: {}", applicationState.getStrategy());
+        }
+    }
+
+    private void runFetchAll() {
+        log.info("run fetch all data.");
         if (applicationState.getState() == SenderState.CONNECTED) {
-            List<SignedMeterDataEntity> initEntities = service.getInitEntities();
-            List<SignedMeterDataEntity> pendingEntities = service.getPendingEntities();
+            List<SignedMeterDataEntity> sendList = service.collectSendList();
+            int sendTimes = service.calculateSendTimes(applicationState.getMaxData(), sendList.size());
 
-            List<SignedMeterDataEntity> sendList = new ArrayList<>();
-            sendList.addAll(initEntities);
-            sendList.addAll(pendingEntities);
+            for (int i = 0; i < sendTimes; i++) {
+                int start = i * applicationState.getMaxData();
+                int boundary = Math.min(((i + 1) * applicationState.getMaxData()), sendList.size());
+                List<SignedMeterDataEntity> subEntities = sendList.subList(start, boundary);
 
-            MeterDataResponse response = service.sendData(applicationState.getId(), applicationState.getToken(), sendList);
-
-            switch (response.getMessage().getType()) {
-                case ERROR:
-                    logError(response);
-                    return;
-                case NOT_AUTHORIZED:
-                    logNotAuthorized();
-                    return;
-                case FIX:
-                    logFix(response);
-                    handlePending(response);
-                    updateToDone(sendList);
-                    return;
-                case SUCCESS:
-                default:
-                    logSuccess();
-                    updateToDone(sendList);
+                MeterDataResponse response = service.directlySend(applicationState.getId(), applicationState.getToken(), subEntities);
+                handleResponse(response, subEntities);
             }
+        }
+    }
+
+    private void runFetchLimitedData() {
+        log.info("run fetch limited data.");
+        if (applicationState.getState() == SenderState.CONNECTED) {
+            List<SignedMeterDataEntity> sendList = service.collectLimitedSendList(applicationState.getMaxData());
+            MeterDataResponse response = service.directlySend(applicationState.getId(), applicationState.getToken(), sendList);
+            handleResponse(response, sendList);
+        }
+    }
+
+    private void handleResponse(MeterDataResponse response, List<SignedMeterDataEntity> sendList) {
+        switch (response.getMessage().getType()) {
+            case ERROR:
+                logError(response);
+                return;
+            case NOT_AUTHORIZED:
+                logNotAuthorized();
+                return;
+            case FIX:
+                logFix(response);
+                handlePending(response);
+                updateToDone(sendList);
+                return;
+            case SUCCESS:
+            default:
+                logSuccess();
+                updateToDone(sendList);
         }
     }
 

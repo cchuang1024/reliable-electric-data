@@ -6,6 +6,9 @@ import java.util.function.Consumer;
 
 public class ApplicationState {
 
+    public static final String STRATEGY_ALL = "ALL";
+    public static final String STRATEGY_LIMITED = "LIMITED";
+
     private static final Object LOCK = new Object();
 
     private SenderState state;
@@ -13,6 +16,28 @@ public class ApplicationState {
 
     @Value("${application.id}")
     private String id;
+
+    @Value("${application.max-data}")
+    private Integer maxData;
+
+    @Value("${application.strategy}")
+    private String strategy;
+
+    public Integer getMaxData() {
+        return maxData;
+    }
+
+    public String getStrategy() {
+        return strategy;
+    }
+
+    public boolean isStrategyAll() {
+        return STRATEGY_ALL.equals(this.getStrategy());
+    }
+
+    public boolean isStrategeLimited() {
+        return STRATEGY_LIMITED.equals(this.getStrategy());
+    }
 
     public String getId() {
         return id;
@@ -67,6 +92,8 @@ public class ApplicationState {
                 "state=" + state +
                 ", token='" + token + '\'' +
                 ", id='" + id + '\'' +
+                ", maxData=" + maxData +
+                ", strategy='" + strategy + '\'' +
                 '}';
     }
 }

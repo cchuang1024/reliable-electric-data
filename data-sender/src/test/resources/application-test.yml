@@ -23,6 +23,8 @@ zookeeper:
 
 application:
   id: data-sender-test
+  max-data: 10
+  strategy: ALL
 
 cloud:
   host: 127.0.0.1

@@ -8,7 +8,7 @@ logging:
 
 spring:
   codec:
-    max-in-memory-size: 30MB
+    max-in-memory-size: 10MB
 
 couchdb:
   client:
@@ -27,6 +27,8 @@ zookeeper:
 
 application:
   id: data-sender-1
+  max-data: 10
+  strategy: ALL
 
 cloud:
   host: 127.0.0.1
