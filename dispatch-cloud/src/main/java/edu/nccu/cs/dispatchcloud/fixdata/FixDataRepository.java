@@ -2,7 +2,6 @@ package edu.nccu.cs.dispatchcloud.fixdata;
 
 import edu.nccu.cs.dispatchcloud.fixdata.FixDataEntity.FixState;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -12,6 +11,8 @@ import java.util.Set;
 @Repository
 public interface FixDataRepository extends CrudRepository<FixDataEntity, String> {
     List<FixDataEntity> findByState(FixState state);
+
+    List<FixDataEntity> findByStateAndTimestampBefore(FixState state, Long timestamp);
 
     Optional<FixDataEntity> findByTimestamp(Long timestamp);
 

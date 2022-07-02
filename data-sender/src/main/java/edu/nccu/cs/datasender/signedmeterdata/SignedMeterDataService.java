@@ -95,12 +95,16 @@ public class SignedMeterDataService {
     }
 
     public void updateToPending(List<Long> timestamps) {
+        log.info("update to pending: {}", timestamps);
+
         List<SignedMeterDataEntity> entities = repository.findByTimestampIn(new HashSet<>(timestamps));
 
-        entities.forEach(entity -> {
+        log.info("entities need to be fixed: {}", entities);
+
+        for(SignedMeterDataEntity entity : entities){
             entity.setState(SignedMeterDataEntity.STATE_PENDING);
             repository.save(entity);
-        });
+        }
     }
 
     public void updateToDone(List<Long> timestamps) {
@@ -129,7 +133,7 @@ public class SignedMeterDataService {
         List<SignedMeterDataEntity> sorted = allData.stream()
                                                     .sorted(Comparator.comparing(SignedMeterDataEntity::getTimestamp, Comparator.reverseOrder()))
                                                     .collect(Collectors.toList());
-        
+
         return sorted.subList(0, Math.min(maxData, sorted.size()));
     }
 }

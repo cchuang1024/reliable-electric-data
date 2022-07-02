@@ -14,7 +14,8 @@ spring:
       uri: "mongodb://nccu:nccu@localhost:37017/meter?authSource=admin&authMechanism=SCRAM-SHA-1"
       auto-index-creation: true
 
-
+application:
+  waitLimit: 5
 
 zookeeper:
   connectString: "192.168.1.52:32181,192.168.1.52:32182,192.168.1.52:32183"

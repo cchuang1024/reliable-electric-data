@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -92,13 +93,19 @@ public class ElectricDataController {
     }
 
     public List<Long> getFixTimestamp() {
-        List<FixDataEntity> fixData = verifierService.getInitFixData();
+        List<FixDataEntity> initData = verifierService.getInitFixData();
 
-        if (!fixData.isEmpty()) {
-            verifierService.updateFixDataToWait(fixData);
+        if (!initData.isEmpty()) {
+            verifierService.updateFixDataToWait(initData);
         }
 
-        return fixData.stream()
+        List<FixDataEntity> waitData = verifierService.getOutOfLimitWaitData();
+
+        ArrayList<FixDataEntity> sendFix = new ArrayList<>();
+        sendFix.addAll(initData);
+        sendFix.addAll(waitData);
+
+        return sendFix.stream()
                       .map(FixDataEntity::getTimestamp)
                       .collect(Collectors.toList());
     }

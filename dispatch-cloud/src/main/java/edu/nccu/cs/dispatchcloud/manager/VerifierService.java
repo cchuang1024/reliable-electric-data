@@ -6,8 +6,11 @@ import edu.nccu.cs.dispatchcloud.fixdata.FixDataRepository;
 import edu.nccu.cs.dispatchcloud.signedmeterdata.SignedMeterDataRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -26,8 +29,19 @@ public class VerifierService {
     @Autowired
     private SignedMeterDataRepository meterDataRepository;
 
+    @Value("${application.waitLimit}")
+    private Integer waitLimit;
+
     public List<FixDataEntity> getInitFixData() {
         return fixDataRepository.findByState(INIT);
+    }
+
+    public List<FixDataEntity> getOutOfLimitWaitData() {
+        long waitLimitMillis = waitLimit * 60 * 1000L;
+        Instant currentMinute = Instant.now().truncatedTo(ChronoUnit.MINUTES);
+        long outOfLimitTimestamp = currentMinute.toEpochMilli() - waitLimitMillis;
+
+        return fixDataRepository.findByStateAndTimestampBefore(WAIT, outOfLimitTimestamp);
     }
 
     public List<FixDataEntity> getWaitFixData() {

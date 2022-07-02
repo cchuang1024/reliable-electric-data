@@ -9,3 +9,6 @@ zookeeper:
   maxRetries: 3
   baseSleepTimeMs: 1000
   connectionTimeout: 30000
+
+application:
+  waitLimit: 5
