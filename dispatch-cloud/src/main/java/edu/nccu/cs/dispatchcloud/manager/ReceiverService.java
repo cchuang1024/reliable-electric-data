@@ -116,9 +116,9 @@ public class ReceiverService {
         }
     }
 
-    public SignedMeterDataEntity buildInitEntity(String applicationId, SignedMeterDataRequest payload) {
+    public SignedMeterDataEntity buildInitEntity(String edgeId, SignedMeterDataRequest payload) {
         return SignedMeterDataEntity.builder()
-                                    .edgeId(applicationId)
+                                    .edgeId(edgeId)
                                     .timestamp(payload.getTimestamp())
                                     .preTimestamp(payload.getPreTimestamp())
                                     .energy(payload.getEnergy())

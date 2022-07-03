@@ -86,9 +86,11 @@ public class ElectricDataController {
                                 .build();
     }
 
+    private static final String DEFAULT_EDGE_ID = "edge-0";
+
     public List<SignedMeterDataEntity> handleRequest(MeterDataRequest<?> request, List<SignedMeterDataRequest> payload) {
         return payload.stream()
-                      .map(p -> receiverService.buildInitEntity(request.getApplicationId(), p))
+                      .map(p -> receiverService.buildInitEntity(DEFAULT_EDGE_ID, p))
                       .collect(Collectors.toList());
     }
 
