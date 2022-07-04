@@ -35,8 +35,9 @@ public class SelfVerifierJob implements Runnable {
 
         long dayFirstTimestamp = DateTimeUtils.timestampFromLocalDateTime(LocalDateTime.now().truncatedTo(ChronoUnit.DAYS));
         long nowTimestamp = DateTimeUtils.timestampFromLocalDateTime(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
+        log.info("find meter data by preTimestamp from {} to {}", dayFirstTimestamp, nowTimestamp);
+
         List<SignedMeterDataEntity> preTimestampUntilNow = querierService.getMeterDataBetweenPreTimestamp(dayFirstTimestamp, nowTimestamp);
-        
         if(preTimestampUntilNow.isEmpty()){
             return;
         }
@@ -44,8 +45,10 @@ public class SelfVerifierJob implements Runnable {
         Set<Long> preTimestamps = preTimestampUntilNow.stream()
                                                       .map(SignedMeterDataEntity::getPreTimestamp)
                                                       .collect(Collectors.toSet());
+
         Long firstPreTimestamp = Collections.min(preTimestamps);
         Long lastPreTimestamp = Collections.max(preTimestamps);
+        log.info("find meter data by timestamp from {} to {}", firstPreTimestamp, lastPreTimestamp);
         
         List<SignedMeterDataEntity> timestampUntilNow = querierService.getMeterDataBetweenTimestamp(firstPreTimestamp, lastPreTimestamp);
         Set<Long> timestamps = timestampUntilNow.stream()
@@ -56,7 +59,6 @@ public class SelfVerifierJob implements Runnable {
 
         if (!preTimestamps.isEmpty()) {
             log.info("preTimestamps need to be fixed: {}", preTimestamps);
-
             receiverService.updateDataToFix(preTimestamps);
             verifierService.createFixData(preTimestamps);
         }
