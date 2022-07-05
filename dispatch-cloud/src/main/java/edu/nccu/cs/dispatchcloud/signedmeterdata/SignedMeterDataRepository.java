@@ -24,6 +24,8 @@ public interface SignedMeterDataRepository extends CrudRepository<SignedMeterDat
 
     List<SignedMeterDataEntity> findByPreTimestampIn(Set<Long> preTimestamps);
 
+    List<SignedMeterDataEntity> findByTimestampIn(Set<Long> timestamps);
+
     Optional<SignedMeterDataEntity> findByPreTimestampAndCheckState(Long preTimestamp, CheckState checkState);
 
     List<SignedMeterDataEntity> findByCheckState(CheckState checkState);
