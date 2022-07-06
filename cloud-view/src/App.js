@@ -1,17 +1,32 @@
-import React, { useEffect, useState } from 'react';
-import { Alert, Box, Collapse, Container, IconButton, Stack, TextField } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import React, {useEffect, useState} from 'react';
+import {
+    Alert,
+    Box,
+    Collapse,
+    Container,
+    IconButton,
+    Paper,
+    Stack,
+    TextField,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow
+} from "@mui/material";
+import {DataGrid} from "@mui/x-data-grid";
+import {AdapterMoment} from '@mui/x-date-pickers/AdapterMoment';
+import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
+import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 import CloseIcon from '@mui/icons-material/Close';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import moment from 'moment';
 import axios from 'axios';
 import _ from 'lodash';
-import { Timer, updateTimer } from "./timer";
-import { BASE_URL } from "./config";
+import {Timer, updateTimer} from "./timer";
+import {BASE_URL} from "./config";
 
 const unixToMilli = unix => unix * 1000;
 const milliToMin = milli => milli / (1000 * 60);
@@ -139,13 +154,65 @@ const buildFixDataGrid = (fixData) => fixData.map(data => ({
 }));
 
 const GRID_COL_DEF = [
-    { field: 'id', headerName: '時戳', width: 130 },
-    { field: 'timestamp', headerName: '資料時間', width: 250 },
-    { field: 'state', headerName: '資料狀態', width: 150 },
-    { field: 'initTime', headerName: '初始化時間', width: 250 },
-    { field: 'fixTime', headerName: '補值時間', width: 250 },
-    { field: 'doneTime', headerName: '完成時間', width: 250 },
+    {field: 'id', headerName: '時戳', width: 130},
+    {field: 'timestamp', headerName: '資料時間', width: 250},
+    {field: 'state', headerName: '資料狀態', width: 150},
+    {field: 'initTime', headerName: '初始化時間', width: 250},
+    {field: 'fixTime', headerName: '補值時間', width: 250},
+    {field: 'doneTime', headerName: '完成時間', width: 250},
 ];
+
+const STAT_CAPTION_LIST = [
+    {key: 'totalMeter', name: '總電表筆數'},
+    {key: 'totalFix', name: '總補值筆數'},
+    {key: 'avgFixLatency', name: '平均補值延遲'},
+    {key: 'minFixLatency', name: '最短補值延遲'},
+    {key: 'maxFixLatency', name: '最長補值延遲'}
+];
+
+const createStatData = (key, caption, value) => ({key, caption, value});
+
+const initStatData = () => STAT_CAPTION_LIST.map(cap => createStatData(cap.key, cap.name, 0));
+
+const dataSize = (data) => (_.isEmpty(data) || _.isNil(data)) ? 0 : data.length;
+
+const calTotalMeter = (meterData, fixData) => {
+    const caption = STAT_CAPTION_LIST.find(cap => cap.key === 'totalMeter');
+    return createStatData(caption.key, caption.name, dataSize(meterData));
+};
+
+const calTotalFix = (meterData, fixData) => {
+    const caption = STAT_CAPTION_LIST.find(cap => cap.key === 'totalFix');
+    return createStatData(caption.key, caption.name, dataSize(fixData));
+};
+
+const calAvgFixLatency = (meterData, fixData) => {
+    const caption = STAT_CAPTION_LIST.find(cap => cap.key === 'avgFixLatency');
+    return createStatData(caption.key, caption.name, 0);
+};
+
+const calMinFixLatency = (meterData, fixData) => {
+    const caption = STAT_CAPTION_LIST.find(cap => cap.key === 'minFixLatency');
+    return createStatData(caption.key, caption.name, 0);
+};
+
+const calMaxFixLatency = (meterData, fixData) => {
+    const caption = STAT_CAPTION_LIST.find(cap => cap.key === 'maxFixLatency');
+    return createStatData(caption.key, caption.name, 0);
+};
+
+const STAT_FUNC_LIST = [
+    calTotalMeter,
+    calTotalFix,
+    calAvgFixLatency,
+    calMinFixLatency,
+    calMaxFixLatency
+];
+
+const buildStatData = (meterData, fixData) => {
+    return STAT_FUNC_LIST.map(
+        (func) => func(meterData, fixData));
+};
 
 const dataFetcher = (dataDate, setDisplayData, setAlertMsg) => {
     const dateStart = dataDate.startOf('day');
@@ -158,33 +225,37 @@ const dataFetcher = (dataDate, setDisplayData, setAlertMsg) => {
         .then(resp => {
             // console.log('response: ', resp);
 
-            const { meterData, fixData } = resp.data;
+            const {meterData, fixData} = resp.data;
             const meterDataDisplay = buildMeterDataOptions(dateStart, meterData);
             // const fixDataDisplay = buildFixDataOptions(dateStart, fixData);
             const fixDataDisplay = buildFixDataGrid(fixData);
+            const statDataDisplay = buildStatData(meterData, fixData);
 
+            // console.log('stat data: ', statDataDisplay);
             // console.log('meter data: ', meterDataDisplay);
 
             setDisplayData({
                 meterData: meterDataDisplay,
-                fixData: fixDataDisplay
+                fixData: fixDataDisplay,
+                statData: statDataDisplay
             });
         }).catch(ex => {
-            console.error('error: ', ex);
-            setAlertMsg(ex.message);
-        });
+        console.error('error: ', ex);
+        setAlertMsg(ex.message);
+    });
 };
 
 function App() {
     const now = moment();
 
     const initMeterDataDisplay = initMeterDataOptions();
-    const initFixDataDisplay = initFixDataOptions();
+    const initStatDataDisplay = initStatData();
 
     const [displayData, setDisplayData] = useState({
         meterData: initMeterDataDisplay,
         // fixData: initFixDataDisplay
-        fixData: []
+        fixData: [],
+        statData: []
     });
     const [dataDate, setDataDate] = useState(now);
     const [alertMsg, setAlertMsg] = useState('');
@@ -198,10 +269,7 @@ function App() {
 
     useEffect(() => {
         clearTimer();
-
-        // console.log("fetch data by date: ", now.format("YYYYMMDD"));
         fetchDataByDate(now);
-
         autoUpdate()
     }, []);
 
@@ -218,22 +286,22 @@ function App() {
 
     return (
         <Container maxWidth="xl">
-            <Stack sx={{ width: '100%' }} spacing={2}>
+            <Stack sx={{width: '100%'}} spacing={2}>
                 <Collapse in={!_.isEmpty(alertMsg.split(''))}>
                     <Alert severity="error"
-                        action={
-                            <IconButton
-                                aria-label="close"
-                                color="inherit"
-                                size="small"
-                                onClick={() => {
-                                    setAlertMsg('');
-                                }}
-                            >
-                                <CloseIcon fontSize="inherit" />
-                            </IconButton>
-                        }
-                        sx={{ mb: 2 }}>
+                           action={
+                               <IconButton
+                                   aria-label="close"
+                                   color="inherit"
+                                   size="small"
+                                   onClick={() => {
+                                       setAlertMsg('');
+                                   }}
+                               >
+                                   <CloseIcon fontSize="inherit"/>
+                               </IconButton>
+                           }
+                           sx={{mb: 2}}>
                         {alertMsg}
                     </Alert>
                 </Collapse>
@@ -265,7 +333,7 @@ function App() {
                     options={displayData.fixData}
                 />
                 */}
-                <Box sx={{ height: 400, width: '100%' }}>
+                <Box sx={{height: 400, width: '100%'}}>
                     <DataGrid
                         rows={displayData.fixData}
                         columns={GRID_COL_DEF}
@@ -273,7 +341,29 @@ function App() {
                         rowsPerPageOptions={[10]}
                     />
                 </Box>
-
+                <TableContainer component={Paper}>
+                    <Table sx={{minWidth: 650}} aria-label="Stat Table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>統計項目</TableCell>
+                                <TableCell align="right">數值</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {displayData.statData.map((stat) => (
+                                <TableRow
+                                    key={stat.key}
+                                    sx={{'&:last-child td, &:last-child th': {border: 0}}}
+                                >
+                                    <TableCell component="th" scope="row">
+                                        {stat.caption}
+                                    </TableCell>
+                                    <TableCell align="right">{stat.value}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
             </Stack>
         </Container>
     );
