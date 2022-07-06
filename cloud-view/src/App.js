@@ -253,9 +253,8 @@ function App() {
 
     const [displayData, setDisplayData] = useState({
         meterData: initMeterDataDisplay,
-        // fixData: initFixDataDisplay
         fixData: [],
-        statData: []
+        statData: initStatDataDisplay,
     });
     const [dataDate, setDataDate] = useState(now);
     const [alertMsg, setAlertMsg] = useState('');
@@ -327,20 +326,20 @@ function App() {
                     highcharts={Highcharts}
                     options={displayData.meterData}
                 />
-                {/*
-                <HighchartsReact
-                    highcharts={Highcharts}
-                    options={displayData.fixData}
-                />
-                */}
+                <>
+                    <div style={{height: 30}}></div>
+                </>
                 <Box sx={{height: 400, width: '100%'}}>
                     <DataGrid
                         rows={displayData.fixData}
                         columns={GRID_COL_DEF}
-                        pageSize={10}
-                        rowsPerPageOptions={[10]}
+                        pageSize={100}
+                        rowsPerPageOptions={[100]}
                     />
                 </Box>
+                <>
+                    <div style={{height: 30}}></div>
+                </>
                 <TableContainer component={Paper}>
                     <Table sx={{minWidth: 650}} aria-label="Stat Table">
                         <TableHead>
