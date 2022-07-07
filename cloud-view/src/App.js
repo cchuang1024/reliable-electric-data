@@ -7,13 +7,13 @@ import {
     IconButton,
     Paper,
     Stack,
-    TextField,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
-    TableRow
+    TableRow,
+    TextField
 } from "@mui/material";
 import {DataGrid} from "@mui/x-data-grid";
 import {AdapterMoment} from '@mui/x-date-pickers/AdapterMoment';
@@ -25,6 +25,8 @@ import HighchartsReact from 'highcharts-react-official';
 import moment from 'moment';
 import axios from 'axios';
 import _ from 'lodash';
+import * as stat from 'simple-statistics'
+import moize from 'moize';
 import {Timer, updateTimer} from "./timer";
 import {BASE_URL} from "./config";
 
@@ -170,7 +172,9 @@ const STAT_CAPTION_LIST = [
     {key: 'maxFixLatency', name: '最長補值延遲'}
 ];
 
-const createStatData = (key, caption, value) => ({key, caption, value});
+const createStatDataWithUnit = (key, caption, value, unit) => ({key, caption, value, unit});
+
+const createStatData = (key, caption, value) => createStatDataWithUnit(key, caption, value, '');
 
 const initStatData = () => STAT_CAPTION_LIST.map(cap => createStatData(cap.key, cap.name, 0));
 
@@ -178,27 +182,90 @@ const dataSize = (data) => (_.isEmpty(data) || _.isNil(data)) ? 0 : data.length;
 
 const calTotalMeter = (meterData, fixData) => {
     const caption = STAT_CAPTION_LIST.find(cap => cap.key === 'totalMeter');
-    return createStatData(caption.key, caption.name, dataSize(meterData));
+    return createStatDataWithUnit(caption.key, caption.name, dataSize(meterData), '筆');
 };
 
 const calTotalFix = (meterData, fixData) => {
     const caption = STAT_CAPTION_LIST.find(cap => cap.key === 'totalFix');
-    return createStatData(caption.key, caption.name, dataSize(fixData));
+    return createStatDataWithUnit(caption.key, caption.name, dataSize(fixData), '筆');
+};
+
+const buildFixLatency = (fixData) => {
+    if (_.isNil(fixData) || _.isEmpty(fixData)) {
+        return [0];
+    }
+
+    return fixData.map(fix => {
+        const {timestamp, doneTime, state} = fix;
+        if (state !== 'DONE') {
+            return 0;
+        } else {
+            return doneTime - timestamp;
+        }
+    })
+};
+
+const memBuildFixLatency = moize(buildFixLatency);
+
+const UNIT_MILLI = "毫秒";
+const UNIT_SECOND = "秒";
+const UNIT_MINUTE = "分鐘";
+const UNIT_HOUR = "小時";
+
+const FIX_FLOAT = 2;
+const toFixedFloat = (num) => Number.parseFloat(num).toFixed(FIX_FLOAT);
+
+const milliToReadable = (milli) => {
+    if (milli < 1500) {
+        return [toFixedFloat(milli), UNIT_MILLI];
+    }
+
+    const second = milli / 1000.0;
+
+    if (second < 90) {
+        return [toFixedFloat(second), UNIT_SECOND];
+    }
+
+    const minute = second / 60.0;
+
+    if (minute < 90) {
+        return [toFixedFloat(minute), UNIT_MINUTE];
+    }
+
+    const hour = minute / 60;
+
+    return [toFixedFloat(hour), UNIT_HOUR];
+};
+
+const milliToReadableRaw = (milli) => {
+    return [toFixedFloat(milli), UNIT_MILLI];
 };
 
 const calAvgFixLatency = (meterData, fixData) => {
     const caption = STAT_CAPTION_LIST.find(cap => cap.key === 'avgFixLatency');
-    return createStatData(caption.key, caption.name, 0);
+    const fixLatency = memBuildFixLatency(fixData);
+    const avgMilli = stat.mean(fixLatency);
+    const [value, unit] = milliToReadable(avgMilli);
+
+    return createStatDataWithUnit(caption.key, caption.name, value, unit);
 };
 
 const calMinFixLatency = (meterData, fixData) => {
     const caption = STAT_CAPTION_LIST.find(cap => cap.key === 'minFixLatency');
-    return createStatData(caption.key, caption.name, 0);
+    const fixLatency = memBuildFixLatency(fixData);
+    const min = stat.min(fixLatency);
+    const [value, unit] = milliToReadable(min)
+
+    return createStatDataWithUnit(caption.key, caption.name, value, unit);
 };
 
 const calMaxFixLatency = (meterData, fixData) => {
     const caption = STAT_CAPTION_LIST.find(cap => cap.key === 'maxFixLatency');
-    return createStatData(caption.key, caption.name, 0);
+    const fixLatency = memBuildFixLatency(fixData);
+    const max = stat.max(fixLatency);
+    const [value, unit] = milliToReadable(max);
+
+    return createStatDataWithUnit(caption.key, caption.name, value, unit);
 };
 
 const STAT_FUNC_LIST = [
@@ -322,23 +389,19 @@ function App() {
             </Stack>
 
             <Stack>
+                <>
+                    <Box sx={{height: 60, width: '100%'}}>
+                        <h2>電力監控資料</h2>
+                    </Box>
+                </>
                 <HighchartsReact
                     highcharts={Highcharts}
                     options={displayData.meterData}
                 />
                 <>
-                    <div style={{height: 30}}></div>
-                </>
-                <Box sx={{height: 400, width: '100%'}}>
-                    <DataGrid
-                        rows={displayData.fixData}
-                        columns={GRID_COL_DEF}
-                        pageSize={100}
-                        rowsPerPageOptions={[100]}
-                    />
-                </Box>
-                <>
-                    <div style={{height: 30}}></div>
+                    <Box sx={{height: 60, width: '100%'}}>
+                        <h2>統計資料</h2>
+                    </Box>
                 </>
                 <TableContainer component={Paper}>
                     <Table sx={{minWidth: 650}} aria-label="Stat Table">
@@ -357,12 +420,25 @@ function App() {
                                     <TableCell component="th" scope="row">
                                         {stat.caption}
                                     </TableCell>
-                                    <TableCell align="right">{stat.value}</TableCell>
+                                    <TableCell align="right">{stat.value} {stat.unit}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
                     </Table>
                 </TableContainer>
+                <>
+                    <Box sx={{height: 60, width: '100%'}}>
+                        <h2>補值資料</h2>
+                    </Box>
+                </>
+                <Box sx={{height: 1000, width: '100%'}}>
+                    <DataGrid
+                        rows={displayData.fixData}
+                        columns={GRID_COL_DEF}
+                        pageSize={100}
+                        rowsPerPageOptions={[100]}
+                    />
+                </Box>
             </Stack>
         </Container>
     );
