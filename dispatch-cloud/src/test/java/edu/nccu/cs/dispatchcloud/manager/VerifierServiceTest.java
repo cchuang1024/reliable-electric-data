@@ -8,9 +8,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
+import static edu.nccu.cs.dispatchcloud.fixdata.FixDataEntity.FixState.INIT;
 import static edu.nccu.cs.utils.CollectionUtils.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -57,5 +60,22 @@ public class VerifierServiceTest {
                 .isEqualTo(fixData1.size());
 
         fixDataRepository.deleteAll();
+    }
+
+    @Test
+    public void testGetFixTimestamp(){
+        Optional<FixDataEntity> maybe = fixDataRepository.findByTimestamp(1657327980000L);
+        if(maybe.isPresent()){
+            FixDataEntity entity = maybe.get();
+            entity.setState(INIT);
+            entity.setInitTime(new Date());
+            fixDataRepository.save(entity);
+        }
+
+        List<FixDataEntity> initData = verifierService.getInitFixData();
+        log.info("init fix data: {}", initData);
+
+        List<FixDataEntity> waitData = verifierService.getOutOfLimitWaitData();
+        log.info("out of limit wait data: {}", waitData);
     }
 }

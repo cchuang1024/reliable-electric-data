@@ -14,10 +14,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static edu.nccu.cs.dispatchcloud.manager.ElectricDataController.DEFAULT_EDGE_ID;
+import static edu.nccu.cs.utils.DateTimeUtils.getDefault;
+import static edu.nccu.cs.utils.DateTimeUtils.getNow;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -137,5 +141,24 @@ public class ReceiverServiceTest {
                                       .energy(3L)
                                       .signature("")
                                       .build());
+    }
+
+    @Test
+    public void testSaveAll(){
+        SignedMeterDataEntity entity =
+                SignedMeterDataEntity.builder()
+                        .edgeId(DEFAULT_EDGE_ID)
+                        .timestamp(1657327980000L)
+                        .preTimestamp(1657326420000L)
+                        .power(98625L)
+                        .energy(13739141L)
+                        .signature("MEQCIFOopAICZ1Sld1F8nigRURPCiIH8HaIzhL8uDuqS1w+UAiAjQxUqNVOuyDF5hbS7Bb5POX32C8HNUDusTF5s+Nx9iA==")
+                        .checkState(SignedMeterDataEntity.CheckState.INIT)
+                        .initTime(getNow())
+                        .fixTime(getDefault())
+                        .doneTime(getDefault())
+                        .build()
+                        .init();
+        receiverService.saveAll(Collections.singletonList(entity));
     }
 }

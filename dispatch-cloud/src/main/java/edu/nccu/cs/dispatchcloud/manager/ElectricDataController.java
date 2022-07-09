@@ -86,7 +86,7 @@ public class ElectricDataController {
                                 .build();
     }
 
-    private static final String DEFAULT_EDGE_ID = "edge-0";
+    public static final String DEFAULT_EDGE_ID = "edge-0";
 
     public List<SignedMeterDataEntity> handleRequest(MeterDataRequest<?> request, List<SignedMeterDataRequest> payload) {
         return payload.stream()

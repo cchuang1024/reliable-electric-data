@@ -83,10 +83,13 @@ public class ReceiverService {
         Optional<SignedMeterDataEntity> fixEntity = repository.findByPreTimestampAndCheckState(income.getTimestamp(), CheckState.FIX);
 
         if (fixEntity.isPresent()) {
-            BeanUtils.copyProperties(fixEntity.get(), income);
+            // BeanUtils.copyProperties(fixEntity.get(), income);
+            SignedMeterDataEntity fixed = fixEntity.get();
 
-            income.setCheckState(CheckState.DONE);
-            income.setDoneTime(getNow());
+            fixed.setCheckState(CheckState.DONE);
+            fixed.setDoneTime(getNow());
+
+            repository.save(fixed);
         }
     }
 

@@ -16,8 +16,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static edu.nccu.cs.dispatchcloud.fixdata.FixDataEntity.FixState.INIT;
-import static edu.nccu.cs.dispatchcloud.fixdata.FixDataEntity.FixState.WAIT;
+import static edu.nccu.cs.dispatchcloud.fixdata.FixDataEntity.FixState.*;
 import static edu.nccu.cs.utils.DateTimeUtils.getDefault;
 import static edu.nccu.cs.utils.DateTimeUtils.getNow;
 
@@ -72,7 +71,13 @@ public class VerifierService {
                                                         .build()
                                                         .init();
                 fixDataRepository.save(newFixData);
-            } 
+            }else if(origFixData.get().getState()==DONE){
+                FixDataEntity origFix = origFixData.get();
+                origFix.setState(INIT);
+                origFix.setInitTime(getNow());
+
+                fixDataRepository.save(origFix);
+            }
         });
     }
 
@@ -81,7 +86,7 @@ public class VerifierService {
                 fixDataRepository.findByTimestampInAndState(doneTimestamps, WAIT);
 
         for (FixDataEntity wait : waitEntities) {
-            wait.setState(FixState.DONE);
+            wait.setState(DONE);
             wait.setDoneTime(getNow());
 
             fixDataRepository.save(wait);
