@@ -16,6 +16,7 @@ spring:
 
 application:
   waitLimit: 5
+  verifyPeriod: 24
 
 zookeeper:
   connectString: "192.168.1.52:32181,192.168.1.52:32182,192.168.1.52:32183"

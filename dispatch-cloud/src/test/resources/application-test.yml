@@ -14,3 +14,4 @@ zookeeper:
 
 application:
   waitLimit: 5
+  verifyPeriod: 24

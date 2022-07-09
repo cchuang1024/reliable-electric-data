@@ -22,3 +22,4 @@ zookeeper:
 
 application:
   waitLimit: ${APPLICATION_WAIT_LIMIT:5}
+  verifyPeriod: ${APPLICATION_VERIFY_PERIOD:24}

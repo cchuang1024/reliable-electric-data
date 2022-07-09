@@ -23,6 +23,8 @@ services:
       TZ: Asia/Taipei
       CLOUD_BASE_URL: "mongodb://nccu:nccu@cloud-base:27017/meter?authSource=admin&authMechanism=SCRAM-SHA-1"
       ZK_URL: "zoo1:2181,zoo2:2181,zoo3:2181"
+      APPLICATION_WAIT_LIMIT: 5
+      APPLICATION_VERIFY_PERIOD: 24
 
 networks:
   default:
