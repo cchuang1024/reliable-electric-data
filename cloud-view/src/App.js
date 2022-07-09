@@ -88,26 +88,25 @@ const initBaseOptions = (title, yName, yUnit, yMin, yMax, yData) => {
     });
 }
 
-const initFixDataOptions = () => {
-    const fix = initBaseData(0);
-    return initBaseOptions('Fix State', 'State', '', -1, 1, fix);
-};
-
-const initMeterDataOptions = () => {
-    const power = initBaseData(0);
+const initMeterDataOptions = (date) => {
+    const power = initBaseData(0, date);
     return initBaseOptions('Meter Data', 'Active Power', 'kW', -100, 2000, power);
 }
 
-const initBaseData = init => {
-    const totalMinutes = (60 * 24) + 1;
+const initBaseData = (init, date) => {
+    const totalMinutes = 60 * 24;
+    const dateCounter = moment(date).startOf('day');
+    
+    // console.log('date: ', date);
+    // console.log('date counter init: ', dateCounter);
 
     let data = [];
 
     for (let i = 0; i < totalMinutes; i++) {
-        const date = moment().startOf('day').add(i, 'minutes');
-
+        const minute = dateCounter.add(1, 'minute');
+        // console.log('date counter: ', minute);
         data.push({
-            x: unixToMilli(date.unix()),
+            x: unixToMilli(minute.unix()),
             y: init
         });
     }
@@ -115,9 +114,9 @@ const initBaseData = init => {
     return data;
 };
 
-const buildRealData = (data, start, key, init, trans) => {
-    const result = initBaseData(init);
-    const startMilli = unixToMilli(start.unix());
+const buildRealData = (data, date, key, init, trans) => {
+    const result = initBaseData(init, date);
+    const startMilli = unixToMilli(date.startOf('day').unix());
 
     if (_.isNil(data)) {
         return result;
@@ -136,14 +135,9 @@ const buildRealData = (data, start, key, init, trans) => {
     return result;
 };
 
-const buildMeterDataOptions = (dateStart, meterData) => {
-    const optionData = buildRealData(meterData, dateStart, 'power', 0, meter => meter / 100.0);
+const buildMeterDataOptions = (date, meterData) => {
+    const optionData = buildRealData(meterData, date, 'power', 0, meter => meter / 100.0);
     return initBaseOptions('Meter Data', 'Active Power', 'kW', -100, 2000, optionData);
-};
-
-const buildFixDataOptions = (dateStart, fixData) => {
-    const optionData = buildRealData(fixData, dateStart, 'state', null, transState);
-    return initBaseOptions('Fix State', 'State', '', -1, 1, optionData);
 };
 
 const buildFixDataGrid = (fixData) => fixData.map(data => ({
@@ -282,19 +276,16 @@ const buildStatData = (meterData, fixData) => {
 };
 
 const dataFetcher = (dataDate, setDisplayData, setAlertMsg) => {
-    const dateStart = dataDate.startOf('day');
-
     axios.get(`${BASE_URL}/electricData`, {
         params: {
-            date: dateStart.format('YYYYMMDD')
+            date: dataDate.format('YYYYMMDD')
         }
     })
         .then(resp => {
             // console.log('response: ', resp);
 
             const {meterData, fixData} = resp.data;
-            const meterDataDisplay = buildMeterDataOptions(dateStart, meterData);
-            // const fixDataDisplay = buildFixDataOptions(dateStart, fixData);
+            const meterDataDisplay = buildMeterDataOptions(dataDate, meterData);
             const fixDataDisplay = buildFixDataGrid(fixData);
             const statDataDisplay = buildStatData(meterData, fixData);
 
@@ -313,9 +304,10 @@ const dataFetcher = (dataDate, setDisplayData, setAlertMsg) => {
 };
 
 function App() {
-    const now = moment();
+    const today = moment().startOf('day');
+    console.log('today: ', today);
 
-    const initMeterDataDisplay = initMeterDataOptions();
+    const initMeterDataDisplay = initMeterDataOptions(today);
     const initStatDataDisplay = initStatData();
 
     const [displayData, setDisplayData] = useState({
@@ -323,19 +315,19 @@ function App() {
         fixData: [],
         statData: initStatDataDisplay,
     });
-    const [dataDate, setDataDate] = useState(now);
+    const [dataDate, setDataDate] = useState(today);
     const [alertMsg, setAlertMsg] = useState('');
 
     const fetchDataByDate = date => dataFetcher(date, setDisplayData, setAlertMsg);
 
-    const updater = _.partial(dataFetcher, now, setDisplayData, setAlertMsg);
+    const updater = _.partial(dataFetcher, dataDate, setDisplayData, setAlertMsg);
     const clearTimer = () => Timer.clearAll();
     const autoUpdate = () => updateTimer("electricData", "0", updater);
     const isSameDate = (moment1, moment2) => moment1.startOf('day').unix() === moment2.startOf('day').unix();
 
     useEffect(() => {
         clearTimer();
-        fetchDataByDate(now);
+        fetchDataByDate(today);
         autoUpdate()
     }, []);
 
@@ -345,7 +337,7 @@ function App() {
         // console.log("fetch data by date: ", dataDate.format("YYYYMMDD"));
         fetchDataByDate(dataDate);
 
-        if (isSameDate(now, dataDate)) {
+        if (isSameDate(today, dataDate)) {
             autoUpdate();
         }
     }, [dataDate]);
