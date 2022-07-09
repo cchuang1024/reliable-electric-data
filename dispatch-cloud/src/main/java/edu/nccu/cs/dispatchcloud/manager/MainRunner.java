@@ -20,7 +20,7 @@ public class MainRunner {
     @Qualifier("taskExecutor")
     private TaskExecutor taskExecutor;
 
-    @Scheduled(fixedRate = 5 * 60 * 1000L)
+    @Scheduled(fixedRate = 3 * 60 * 1000L)
     public void fetchAndSend() {
         SelfVerifierJob job = context.getBean(SelfVerifierJob.class);
         taskExecutor.execute(job);
