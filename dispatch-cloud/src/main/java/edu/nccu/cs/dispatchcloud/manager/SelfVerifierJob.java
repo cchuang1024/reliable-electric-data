@@ -65,7 +65,7 @@ public class SelfVerifierJob implements Runnable {
         if (!preTimestamps.isEmpty()) {
             log.info("preTimestamps need to be fixed: {}", preTimestamps);
             receiverService.updateDataToFix(preTimestamps);
-            verifierService.createFixData(preTimestamps);
+            verifierService.createFixDataWithRenew(preTimestamps);
         }
     }
 }
