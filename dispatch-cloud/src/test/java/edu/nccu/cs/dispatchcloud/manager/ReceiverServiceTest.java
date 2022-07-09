@@ -145,20 +145,34 @@ public class ReceiverServiceTest {
 
     @Test
     public void testSaveAll(){
-        SignedMeterDataEntity entity =
+        SignedMeterDataEntity entity1 =
                 SignedMeterDataEntity.builder()
                         .edgeId(DEFAULT_EDGE_ID)
-                        .timestamp(1657327980000L)
-                        .preTimestamp(1657326420000L)
-                        .power(98625L)
-                        .energy(13739141L)
-                        .signature("MEQCIFOopAICZ1Sld1F8nigRURPCiIH8HaIzhL8uDuqS1w+UAiAjQxUqNVOuyDF5hbS7Bb5POX32C8HNUDusTF5s+Nx9iA==")
+                        .timestamp(1657329240000L)
+                        .preTimestamp(1657329180000L)
+                        .power(98408L)
+                        .energy(13778585L)
+                        .signature("MEQCIE4dh3g4X1nwwqr/bTynkjjnX7C8QF44weB0l0LhvGwnAiA4Cq7IEae8Y7pPgmUOItZjMeM2quuvCi5oLJa67n2LPA==")
                         .checkState(SignedMeterDataEntity.CheckState.INIT)
                         .initTime(getNow())
                         .fixTime(getDefault())
                         .doneTime(getDefault())
                         .build()
                         .init();
-        receiverService.saveAll(Collections.singletonList(entity));
+        SignedMeterDataEntity entity2 =
+                SignedMeterDataEntity.builder()
+                        .edgeId(DEFAULT_EDGE_ID)
+                        .timestamp(1657329780000L)
+                        .preTimestamp(1657329720000L)
+                        .power(110142L)
+                        .energy(13795135L)
+                        .signature("MEQCIA6sb4JFtlHfM8qSoNdvlFRYmPtpNblSGi8cyVlNVz9eAiACzNsG5DGSmi/LQSHLlQx/njPRy2GDxPF2KHEWzWbNmA==")
+                        .checkState(SignedMeterDataEntity.CheckState.INIT)
+                        .initTime(getNow())
+                        .fixTime(getDefault())
+                        .doneTime(getDefault())
+                        .build()
+                        .init();
+        receiverService.saveAll(List.of(entity1, entity2));
     }
 }

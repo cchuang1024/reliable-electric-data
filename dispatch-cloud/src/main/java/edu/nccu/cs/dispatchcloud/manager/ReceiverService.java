@@ -51,7 +51,7 @@ public class ReceiverService {
         Set<Long> done =
                 result.stream()
                       .filter(entity -> Objects.equals(CheckState.DONE, entity.getCheckState()))
-                      .map(SignedMeterDataEntity::getPreTimestamp)
+                      .map(SignedMeterDataEntity::getTimestamp)
                       .collect(Collectors.toSet());
 
         verifierService.updateToDone(done);
@@ -83,7 +83,6 @@ public class ReceiverService {
         Optional<SignedMeterDataEntity> fixEntity = repository.findByPreTimestampAndCheckState(income.getTimestamp(), CheckState.FIX);
 
         if (fixEntity.isPresent()) {
-            // BeanUtils.copyProperties(fixEntity.get(), income);
             SignedMeterDataEntity fixed = fixEntity.get();
 
             fixed.setCheckState(CheckState.DONE);

@@ -96,16 +96,14 @@ public class ElectricDataController {
 
     public List<Long> getFixTimestamp() {
         List<FixDataEntity> initData = verifierService.getInitFixData();
-
-        log.info("init fix data: {}", initData);
+        // log.info("init fix data: {}", initData);
 
         if (!initData.isEmpty()) {
             verifierService.updateFixDataToWait(initData);
         }
 
         List<FixDataEntity> waitData = verifierService.getOutOfLimitWaitData();
-
-        log.info("out of limit wait data: {}", waitData);
+        // log.info("out of limit wait data: {}", waitData);
 
         ArrayList<FixDataEntity> sendFix = new ArrayList<>();
         sendFix.addAll(initData);

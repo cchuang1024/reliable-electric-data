@@ -3,7 +3,6 @@ package edu.nccu.cs.dispatchcloud.manager;
 import edu.nccu.cs.dispatchcloud.fixdata.FixDataEntity;
 import edu.nccu.cs.dispatchcloud.fixdata.FixDataEntity.FixState;
 import edu.nccu.cs.dispatchcloud.fixdata.FixDataRepository;
-import edu.nccu.cs.dispatchcloud.signedmeterdata.SignedMeterDataRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,8 +25,6 @@ public class VerifierService {
 
     @Autowired
     private FixDataRepository fixDataRepository;
-    @Autowired
-    private SignedMeterDataRepository meterDataRepository;
 
     @Value("${application.waitLimit}")
     private Integer waitLimit;
@@ -44,41 +41,30 @@ public class VerifierService {
         return fixDataRepository.findByStateAndTimestampBefore(WAIT, outOfLimitTimestamp);
     }
 
-    public List<FixDataEntity> getWaitFixData() {
-        return fixDataRepository.findByState(WAIT);
-    }
-
-
     public void updateFixDataToWait(List<FixDataEntity> fixData) {
         fixDataRepository.saveAll(fixData.stream()
-                                         .peek(fix -> {
-                                             fix.setState(FixState.WAIT);
-                                             fix.setWaitTime(getNow());
-                                         })
-                                         .collect(Collectors.toList()));
+                .peek(fix -> {
+                    fix.setState(FixState.WAIT);
+                    fix.setWaitTime(getNow());
+                })
+                .collect(Collectors.toList()));
     }
 
     public void createFixData(Set<Long> fixData) {
-        fixData.forEach(timestamp -> {
+        for (Long timestamp : fixData) {
             Optional<FixDataEntity> origFixData = fixDataRepository.findByTimestamp(timestamp);
             if (origFixData.isEmpty()) {
                 FixDataEntity newFixData = FixDataEntity.builder()
-                                                        .timestamp(timestamp)
-                                                        .state(INIT)
-                                                        .initTime(getNow())
-                                                        .waitTime(getDefault())
-                                                        .doneTime(getDefault())
-                                                        .build()
-                                                        .init();
+                        .timestamp(timestamp)
+                        .state(INIT)
+                        .initTime(getNow())
+                        .waitTime(getDefault())
+                        .doneTime(getDefault())
+                        .build()
+                        .init();
                 fixDataRepository.save(newFixData);
-            }else if(origFixData.get().getState()==DONE){
-                FixDataEntity origFix = origFixData.get();
-                origFix.setState(INIT);
-                origFix.setInitTime(getNow());
-
-                fixDataRepository.save(origFix);
             }
-        });
+        }
     }
 
     public void updateToDone(Set<Long> doneTimestamps) {
