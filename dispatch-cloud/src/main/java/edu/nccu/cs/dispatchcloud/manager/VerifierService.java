@@ -72,15 +72,7 @@ public class VerifierService {
                                                         .build()
                                                         .init();
                 fixDataRepository.save(newFixData);
-            } else {
-                FixDataEntity origFix = origFixData.get();
-                origFix.setState(INIT);
-                origFix.setInitTime(getNow());
-                origFix.setWaitTime(getDefault());
-                origFix.setDoneTime(getDefault());
-
-                fixDataRepository.save(origFix);
-            }
+            } 
         });
     }
 
