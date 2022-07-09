@@ -47,7 +47,7 @@ public class StateManagementJob implements Runnable {
                         break;
                     case DISCONNECTED:
                         log.warn("DISCONNECTED state, check connection.");
-                        stateManager.check();
+                        stateManager.connect();
                         TimeUnit.SECONDS.sleep(DISCONNECT_WAIT_PERIOD);
                         break;
                     case DESTROY:
