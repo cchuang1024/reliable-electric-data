@@ -1,6 +1,7 @@
 package edu.nccu.cs.dispatchcloud.fixdata;
 
 import edu.nccu.cs.dispatchcloud.fixdata.FixDataEntity.FixState;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -18,5 +19,7 @@ public interface FixDataRepository extends CrudRepository<FixDataEntity, String>
 
     List<FixDataEntity> findByTimestampInAndState(Set<Long> timestamps, FixState state);
 
+    @Query(value = "{timestamp:{$gte:?0, $lte:?1}}",
+            sort = "{timestamp:1}")
     List<FixDataEntity> findByTimestampBetween(Long start, Long end);
 }
