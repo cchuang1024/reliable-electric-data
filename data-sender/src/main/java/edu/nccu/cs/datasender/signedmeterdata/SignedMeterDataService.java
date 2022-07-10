@@ -110,10 +110,10 @@ public class SignedMeterDataService {
     public void updateToDone(List<Long> timestamps) {
         List<SignedMeterDataEntity> entities = repository.findByTimestampIn(new HashSet<>(timestamps));
 
-        entities.forEach(entity -> {
+        for(SignedMeterDataEntity entity : entities){
             entity.setState(SignedMeterDataEntity.STATE_DONE);
             repository.save(entity);
-        });
+        }
     }
 
     public List<SignedMeterDataEntity> collectSendList() {
