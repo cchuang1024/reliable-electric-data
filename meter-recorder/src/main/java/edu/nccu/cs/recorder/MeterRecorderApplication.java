@@ -18,7 +18,7 @@ public class MeterRecorderApplication {
 
     public static void main(String[] args) {
         SpringApplication application = new SpringApplication(MeterRecorderApplication.class);
-        application.setWebApplicationType(WebApplicationType.NONE);
+        // application.setWebApplicationType(WebApplicationType.NONE);
         application.run(args);
     }
 

@@ -74,6 +74,8 @@ services:
     depends_on:
       - data-sender-1
       - data-sender-2
+    ports:
+      - 5678:5678
     volumes:
       - /usr/share/zoneinfo/Asia/Taipei:/etc/localtime:ro
       - recorder-data:/app/DB
