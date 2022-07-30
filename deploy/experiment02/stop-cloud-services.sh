@@ -3,15 +3,15 @@
 ROOT="/home/schemer/code/deploy/experiment02"
 
 cd $ROOT
-cd edge-recorder/
+cd cloud-services/
 docker-compose down
 
 cd ..
-cd edge-collector/
-docker-compose down
+cd cloud-zoo/
+sh ./stop-zookeeper.sh
 
 cd ..
-cd edge-context/
+cd cloud-context/
 docker-compose down
 
 cd $ROOT
