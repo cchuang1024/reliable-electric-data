@@ -1,0 +1,78 @@
+version: "3"
+services:
+  data-saver-1:
+    image: couchdb
+    restart: always
+    volumes:
+      - /usr/share/zoneinfo/Asia/Taipei:/etc/localtime:ro
+      - saver-1-data:/opt/couchdb/data
+    ports:
+      - 5984:5984
+    environment:
+      TZ: Asia/Taipei
+      COUCHDB_USER: nccu
+      COUCHDB_PASSWORD: nccu
+
+  data-sender-1:
+    image: dispatch-cloud:54320/nccu/data-sender
+    restart: always
+    depends_on:
+      - data-saver-1
+    volumes:
+      - /usr/share/zoneinfo/Asia/Taipei:/etc/localtime:ro
+    environment:
+      TZ: Asia/Taipei
+      DATA_SAVER_URL: http://data-saver-1:5984/
+      ZK_URL: "dispatch-cloud:2181,dispatch-cloud:2182,dispatch-cloud:2183"
+      APPLICATION_ID: data-sender-1
+      APPLICATION_MAX_DATA: 10
+      APPLICATION_STRATEGY: LIMITED
+      # APPLICATION_STRATEGY: ALL
+      CLOUD_HOST: dispatch-cloud
+      CLOUD_PORT: 8080
+    extra_hosts:
+      # - "dispatch-cloud:192.168.0.186"
+      - "dispatch-cloud:192.168.0.164"
+
+  data-saver-2:
+    image: couchdb
+    restart: always
+    volumes:
+      - /usr/share/zoneinfo/Asia/Taipei:/etc/localtime:ro
+      - saver-2-data:/opt/couchdb/data
+    ports:
+      - 5985:5984
+    environment:
+      TZ: Asia/Taipei
+      COUCHDB_USER: nccu
+      COUCHDB_PASSWORD: nccu
+
+  data-sender-2:
+    image: dispatch-cloud:54320/nccu/data-sender
+    restart: always
+    depends_on:
+      - data-saver-2
+    volumes:
+      - /usr/share/zoneinfo/Asia/Taipei:/etc/localtime:ro
+    environment:
+      TZ: Asia/Taipei
+      DATA_SAVER_URL: http://data-saver-2:5984/
+      ZK_URL: "dispatch-cloud:2181,dispatch-cloud:2182,dispatch-cloud:2183"
+      APPLICATION_ID: data-sender-2
+      APPLICATION_MAX_DATA: 10
+      APPLICATION_STRATEGY: LIMITED
+      # APPLICATION_STRATEGY: ALL
+      CLOUD_HOST: dispatch-cloud
+      CLOUD_PORT: 8080
+    extra_hosts:
+      # - "dispatch-cloud:192.168.0.186"
+      - "dispatch-cloud:192.168.0.164"
+
+volumes:
+  saver-1-data: { }
+  saver-2-data: { }
+
+networks:
+  default:
+    external:
+      name: edge-network

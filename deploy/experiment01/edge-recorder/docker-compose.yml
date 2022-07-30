@@ -1,0 +1,27 @@
+version: "3"
+services:
+  meter-recorder:
+    image: dispatch-cloud:54320/nccu/meter-recorder
+    restart: always
+    depends_on:
+      - data-sender-1
+      - data-sender-2
+    ports:
+      - 5678:5678
+    volumes:
+      - /usr/share/zoneinfo/Asia/Taipei:/etc/localtime:ro
+      - recorder-data:/app/DB
+    environment:
+      TZ: Asia/Taipei
+      RECORDER_ID: recorder-1
+      METER_HOST: sim-meter
+      COLLECTOR_1_HOST: data-saver-1
+      COLLECTOR_2_HOST: data-saver-2
+
+volumes:
+  recorder-data: { }
+
+networks:
+  default:
+    external:
+      name: edge-network

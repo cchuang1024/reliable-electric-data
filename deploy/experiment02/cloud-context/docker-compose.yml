@@ -1,0 +1,41 @@
+version: "3"
+services:
+  cloud-base:
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - cloud-data:/data/db
+      - /usr/share/zoneinfo/Asia/Taipei:/etc/localtime:ro
+      - ./create-db.js:/docker-entrypoint-initdb.d/create-db.js:ro
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: nccu
+      MONGO_INITDB_ROOT_PASSWORD: nccu
+      TZ: Asia/Taipei
+
+  cloud-base-ui:
+    image: mongo-express
+    restart: always
+    volumes:
+      - /usr/share/zoneinfo/Asia/Taipei:/etc/localtime:ro
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_BASICAUTH_USERNAME: nccu
+      ME_CONFIG_BASICAUTH_PASSWORD: nccu
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: 'true'
+      ME_CONFIG_MONGODB_ADMINUSERNAME: nccu
+      ME_CONFIG_MONGODB_ADMINPASSWORD: nccu
+      ME_CONFIG_MONGODB_SERVER: cloud-base
+      TZ: Asia/Taipei
+    depends_on:
+      - cloud-base
+
+volumes:
+  cloud-data: {}
+
+networks:
+  default:
+    external:
+      name: cloud-network
