@@ -3,9 +3,6 @@ services:
   meter-recorder:
     image: dispatch-cloud:54320/nccu/meter-recorder
     restart: always
-    depends_on:
-      - data-sender-1
-      - data-sender-2
     ports:
       - 5678:5678
     volumes:
